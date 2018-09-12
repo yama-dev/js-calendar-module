@@ -1,7 +1,7 @@
 {
   "name": "js-calendar-module",
   "version": "0.0.3",
-  "description": "create Calender.",
+  "description": "Create Calender library.",
   "keywords": [
     "calendar",
     "plugin"
