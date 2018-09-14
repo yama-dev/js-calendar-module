@@ -8,7 +8,7 @@
  */
 
 import { Calendar } from 'calendar';
-import moment from 'moment-timezone';
+import moment from 'moment';
 
 import {PARSE_MODULE} from 'js-parse-module'
 
@@ -26,7 +26,7 @@ export class CALENDAR_MODULE {
     this.HtmlCalendar = '';
 
     // Moment Now.
-    this.NowMoment = moment().tz('Asia/Tokyo');
+    this.NowMoment = moment();
 
     // Adjust option template.
     if(!options.template)            options.template = {}
