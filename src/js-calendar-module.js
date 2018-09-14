@@ -17,7 +17,7 @@ export class CALENDAR_MODULE {
   constructor(options={}){
 
     // Set Version.
-    this.Version = '0.0.3';
+    this.Version = '0.0.4';
 
     // Use for discrimination by URL.
     this.CurrentUrl = location.href;
@@ -27,6 +27,7 @@ export class CALENDAR_MODULE {
 
     // Moment Now.
     this.NowMoment = moment();
+    this.SetMoment = moment();
 
     // Adjust option template.
     if(!options.template)            options.template = {}
@@ -76,6 +77,7 @@ export class CALENDAR_MODULE {
     if(!options.on) options.on = {};
     this.on = {
       Change : options.on.Change||'',
+      Load   : options.on.Load||'',
       Prev   : options.on.Prev||'',
       Next   : options.on.Next||'',
     }
@@ -96,30 +98,40 @@ export class CALENDAR_MODULE {
     // CacheElement
     this.CacheElement();
 
-    this.CreateCalendar();
+    // Create&Set Calendar (html)
+    this.HtmlCalendar = this.CreateCalendarHtml();
+
+    // Render Calendar.
     this.Render();
+
+    // Event On Load.
+    this.OnLoad();
+
   }
 
   DebugMode(){
     console.log(this);
   }
 
-  get StrYear(){
+  StrYear(){
     return `${this.Config.year}`
   }
-  get StrMonth(){
+  StrMonth(){
     return `${this.Config.month}`
   }
-  get HtmlTitle(){
+  HtmlTitle(){
     let _obj = {
-      year: this.StrYear,
-      month: this.StrMonth
+      year      : this.SetMoment.year(),
+      month     : this.SetMoment.month()+1,
+      month_str : this.SetMoment.format('MM'),
+      month_id  : this.SetMoment.month(),
+      date      : this.SetMoment.date()
     }
     let _return = PARSE_MODULE.Str2Mustache(this.Config.template.title,_obj);
 
     return _return
   }
-  get HtmlTitleWeek(){
+  HtmlTitleWeek(){
     let _return = '';
 
     this.Config.day_of_week_list.map((val)=>{
@@ -141,17 +153,23 @@ export class CALENDAR_MODULE {
     let _return = {
       current: {
         year: _moment.year(),
-        month: _moment.month(),
+        month: _moment.month()+1,
+        month_str: _moment.format('MM'),
+        month_id: _moment.month(),
         date: _moment.date()
       },
       prev: {
         year: _momentPrev.year(),
-        month: _momentPrev.month(),
+        month: _momentPrev.month()+1,
+        month_str: _momentPrev.format('MM'),
+        month_id: _momentPrev.month(),
         date: _momentPrev.date()
       },
       next: {
         year: _momentNext.year(),
-        month: _momentNext.month(),
+        month: _momentNext.month()+1,
+        month_str: _momentNext.format('MM'),
+        month_id: _momentNext.month(),
         date: _momentNext.date()
       }
     }
@@ -166,8 +184,8 @@ export class CALENDAR_MODULE {
     this.$uiElemTitleWeek = document.querySelector(this.Config.elem_title_week);
   }
 
-  CreateCalendar(){
-    this.HtmlCalendar = '';
+  CreateCalendarHtml(){
+    let _html = '';
 
     // Create Calendar HTML data for one month.
     this.CalendarData.map((val_week,index_week)=>{
@@ -211,10 +229,11 @@ export class CALENDAR_MODULE {
           day_of_week     : _date_day_of_week,
           date_data       : _date_event_html
         }
-        this.HtmlCalendar += PARSE_MODULE.Str2Mustache(this.Config.template.date,obj);
+        _html += PARSE_MODULE.Str2Mustache(this.Config.template.date,obj);
 
       });
     });
+    return _html;
   }
 
   GetEventData(y = this.NowMoment.year(), m = this.NowMoment.month(), d = this.NowMoment.date(), toHtml = false){
@@ -299,15 +318,18 @@ export class CALENDAR_MODULE {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
 
     this.Config.year     = _date.prev.year;
-    this.Config.month    = _date.prev.month+1;
-    this.Config.month_id = _date.prev.month;
+    this.Config.month    = _date.prev.month;
+    this.Config.month_id = _date.prev.month_id;
 
     this.CalendarData = new Calendar(1).monthDays(
       this.Config.year,
       this.Config.month_id
     );
 
-    this.CreateCalendar();
+    // Set Target Moment.
+    this.SetMoment = moment([this.Config.year,this.Config.month_id,this.Config.date]);
+
+    this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
 
     this.OnChange();
@@ -319,15 +341,18 @@ export class CALENDAR_MODULE {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
 
     this.Config.year     = _date.next.year;
-    this.Config.month    = _date.next.month+1;
-    this.Config.month_id = _date.next.month;
+    this.Config.month    = _date.next.month;
+    this.Config.month_id = _date.next.month_id;
 
     this.CalendarData = new Calendar(1).monthDays(
       this.Config.year,
       this.Config.month_id
     );
 
-    this.CreateCalendar();
+    // Set Target Moment.
+    this.SetMoment = moment([this.Config.year,this.Config.month_id,this.Config.date]);
+
+    this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
 
     this.OnChange();
@@ -342,14 +367,21 @@ export class CALENDAR_MODULE {
     }
 
     // Delete content.
-    this.$uiElemContent.innerHTML = '';
-    this.$uiElemTitle.innerHTML = '';
+    this.$uiElemContent.innerHTML   = '';
+    this.$uiElemTitle.innerHTML     = '';
     this.$uiElemTitleWeek.innerHTML = '';
 
     // Render content.
-    this.$uiElemContent.innerHTML = this.HtmlCalendar;
-    this.$uiElemTitle.innerHTML = this.HtmlTitle;
-    this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek;
+    this.$uiElemContent.innerHTML   = this.HtmlCalendar;
+    this.$uiElemTitle.innerHTML     = this.HtmlTitle();
+    this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek();
+
+  }
+
+  OnLoad(){
+
+    let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
+    if(this.on.Load && typeof(this.on.Load) === 'function') this.on.Load(_date);
 
   }
 
