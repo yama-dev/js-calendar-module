@@ -1,7 +1,7 @@
 /*!
  * JS CALENDAR_MODULE (JavaScript Library)
  *   js-calendar-module.js
- * Version 0.0.4
+ * Version 0.0.5
  * Repository https://github.com/yama-dev/js-calendar-module
  * Author yama-dev
  * Licensed under the MIT license.
@@ -17,7 +17,7 @@ export class CALENDAR_MODULE {
   constructor(options={}){
 
     // Set Version.
-    this.Version = '0.0.4';
+    this.Version = '0.0.5';
 
     // Use for discrimination by URL.
     this.CurrentUrl = location.href;
@@ -120,6 +120,7 @@ export class CALENDAR_MODULE {
     return `${this.Config.month}`
   }
   HtmlTitle(){
+
     let _obj = {
       year      : this.SetMoment.year(),
       month     : this.SetMoment.month()+1,
@@ -327,8 +328,7 @@ export class CALENDAR_MODULE {
     );
 
     // Set Target Moment.
-    this.SetMoment = moment([this.Config.year,this.Config.month_id,this.Config.date]);
-
+    this.SetMoment = moment([this.Config.year,this.Config.month_id]);
     this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
 
@@ -350,7 +350,7 @@ export class CALENDAR_MODULE {
     );
 
     // Set Target Moment.
-    this.SetMoment = moment([this.Config.year,this.Config.month_id,this.Config.date]);
+    this.SetMoment = moment([this.Config.year,this.Config.month_id]);
 
     this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
