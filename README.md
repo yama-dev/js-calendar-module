@@ -36,6 +36,17 @@ import CALENDAR_MODULE from 'js-calendar-module';
 <script src="./js-calendar-module.js"></script>
 <script>
   let CM =  new CALENDAR_MODULE({
+    monday_start     : true,
+    day_of_week_list : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    auto_render      : true,
+    on: {
+      Load: function(date){
+        console.log(date);
+      },
+      Change: function(date){
+        console.log(date);
+      }
+    }
   });
 </script>
 ```
@@ -58,42 +69,6 @@ none
 <br><br><br>
 
 ___
-
-**For Developer**
-
-## Contribution
-
-1. Fork it ( https://github.com/yama-dev/js-calendar-module/fork )
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
-5. Create new Pull Request
-
-<br>
-
-## Develop
-
-### at Development
-
-Install node modules.
-
-``` bash
-$ npm install
-```
-
-Run npm script 'develop'
-
-``` bash
-$ npm run develop
-```
-
-Run npm script 'production'
-
-``` bash
-$ npm run production
-```
-
-<br>
 
 ## Licence
 
