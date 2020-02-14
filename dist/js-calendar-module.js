@@ -16,7 +16,7 @@ t.version="0.1.0";var a=function(e){this.message=e,this.toString=function(){retu
 /*!
  * JS CALENDAR_MODULE (JavaScript Library)
  *   js-calendar-module.js
- * Version 0.1.1
+ * Version 0.2.1
  * Repository https://github.com/yama-dev/js-calendar-module
  * Author yama-dev
  * Licensed under the MIT license.
