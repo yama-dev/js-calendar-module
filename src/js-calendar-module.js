@@ -320,7 +320,7 @@ export class CALENDAR_MODULE {
     this.Config.month = _date.prev.month;
     this.Config.month_id = _date.prev.month_id;
 
-    this.CalendarData = new Calendar(1).monthDays(this.Config.year, this.Config.month_id);
+    this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // Set Target Moment.
     this.SetMoment = moment([this.Config.year, this.Config.month_id]);
@@ -339,7 +339,7 @@ export class CALENDAR_MODULE {
     this.Config.month = _date.next.month;
     this.Config.month_id = _date.next.month_id;
 
-    this.CalendarData = new Calendar(1).monthDays(this.Config.year, this.Config.month_id);
+    this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // Set Target Moment.
     this.SetMoment = moment([this.Config.year, this.Config.month_id]);
