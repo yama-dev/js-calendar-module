@@ -216,11 +216,18 @@ export class CALENDAR_MODULE {
           _class_name += ` ${this.Config.classname.date_noevent}`;
         }
 
-        // Create Event data.
+        let _class_name_parent = '';
         let _date_event_html = '';
-        _date_event_data.map((val, index) => {
-          _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
-        });
+        if(_date_event_data.length){
+          // Create Event data.
+          _date_event_data.map((val, index) => {
+            if(val.category_en){
+              _class_name_parent += ` u-has-${val.category_en}`;
+            } 
+            _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
+          });
+          _class_name += _class_name_parent;
+        }
 
         // Create Calendar HTML data for one day.
         let obj = {
@@ -234,6 +241,7 @@ export class CALENDAR_MODULE {
           date_data: _date_event_html
         };
         _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
+
       });
     });
     return _html;
