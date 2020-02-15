@@ -1,7 +1,7 @@
 /*!
  * JS CALENDAR_MODULE (JavaScript Library)
  *   js-calendar-module.js
- * Version 0.1.1
+ * Version 0.2.1
  * Repository https://github.com/yama-dev/js-calendar-module
  * Author yama-dev
  * Licensed under the MIT license.
@@ -15,7 +15,7 @@ import { PARSE_MODULE } from 'js-parse-module';
 export class CALENDAR_MODULE {
   constructor(options = {}) {
     // Set Version.
-    this.Version = '0.1.1';
+    this.Version = '0.2.1';
 
     // Use for discrimination by URL.
     this.CurrentUrl = location.href;
@@ -216,11 +216,18 @@ export class CALENDAR_MODULE {
           _class_name += ` ${this.Config.classname.date_noevent}`;
         }
 
-        // Create Event data.
+        let _class_name_parent = '';
         let _date_event_html = '';
-        _date_event_data.map((val, index) => {
-          _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
-        });
+        if(_date_event_data.length){
+          // Create Event data.
+          _date_event_data.map((val, index) => {
+            if(val.category_en){
+              _class_name_parent += ` u-has-${val.category_en}`;
+            } 
+            _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
+          });
+          _class_name += _class_name_parent;
+        }
 
         // Create Calendar HTML data for one day.
         let obj = {
@@ -234,6 +241,7 @@ export class CALENDAR_MODULE {
           date_data: _date_event_html
         };
         _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
+
       });
     });
     return _html;
@@ -320,7 +328,7 @@ export class CALENDAR_MODULE {
     this.Config.month = _date.prev.month;
     this.Config.month_id = _date.prev.month_id;
 
-    this.CalendarData = new Calendar(1).monthDays(this.Config.year, this.Config.month_id);
+    this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // Set Target Moment.
     this.SetMoment = moment([this.Config.year, this.Config.month_id]);
@@ -339,7 +347,7 @@ export class CALENDAR_MODULE {
     this.Config.month = _date.next.month;
     this.Config.month_id = _date.next.month_id;
 
-    this.CalendarData = new Calendar(1).monthDays(this.Config.year, this.Config.month_id);
+    this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // Set Target Moment.
     this.SetMoment = moment([this.Config.year, this.Config.month_id]);
