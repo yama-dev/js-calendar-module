@@ -1,6 +1,6 @@
 {
   "name": "js-calendar-module",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Create Calender library.",
   "keywords": [
     "calendar",
@@ -32,8 +32,8 @@
     "babel-preset-env": "^1.6.1",
     "browser-sync": "^2.23.6",
     "npm-run-all": "^4.1.2",
-    "webpack": "^4.6.0",
-    "webpack-cli": "^2.0.14"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "calendar": "^0.1.0",
