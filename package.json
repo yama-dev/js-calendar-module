@@ -38,6 +38,6 @@
   "dependencies": {
     "calendar": "^0.1.0",
     "js-parse-module": "0.0.3",
-    "moment": "^2.22.2"
+    "moment": "^2.27.0"
   }
 }
