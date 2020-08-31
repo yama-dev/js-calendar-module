@@ -167,27 +167,33 @@ export class CALENDAR_MODULE {
         month: _moment.month() + 1,
         month_str: _moment.format('MM'),
         month_str_en: _moment.format('MMMM'),
-        day_of_week_str_en_str_en: _moment.format('mmmm'),
+        day_of_week_str_en: _moment.format('dddd'),
         month_id: _moment.month(),
-        date: _moment.date()
+        date: _moment.date(),
+        date_str: _moment.format('DD'),
+        date_str_en: _moment.format('Do')
       },
       prev: {
         year: _momentPrev.year(),
         month: _momentPrev.month() + 1,
         month_str: _momentPrev.format('MM'),
         month_str_en: _momentPrev.format('MMMM'),
-        day_of_week_str_en_str_en: _momentPrev.format('mmmm'),
+        day_of_week_str_en: _momentPrev.format('dddd'),
         month_id: _momentPrev.month(),
-        date: _momentPrev.date()
+        date: _momentPrev.date(),
+        date_str: _momentPrev.format('DD'),
+        date_str_en: _momentPrev.format('Do')
       },
       next: {
         year: _momentNext.year(),
         month: _momentNext.month() + 1,
         month_str: _momentNext.format('MM'),
         month_str_en: _momentNext.format('MMMM'),
-        day_of_week_str_en_str_en: _momentNext.format('mmmm'),
+        day_of_week_str_en: _momentNext.format('dddd'),
         month_id: _momentNext.month(),
-        date: _momentNext.date()
+        date: _momentNext.date(),
+        date_str: _momentNext.format('DD'),
+        date_str_en: _momentNext.format('Do')
       }
     };
 
