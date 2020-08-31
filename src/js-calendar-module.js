@@ -135,7 +135,9 @@ export class CALENDAR_MODULE {
       month_str_en_lower: this.SetMoment.format('MMMM').toLowerCase(),
       day_of_week_str_en: this.SetMoment.format('dddd'),
       month_id: this.SetMoment.month(),
-      date: this.SetMoment.date()
+      date: this.SetMoment.date(),
+      date_str: this.SetMoment.format('DD'),
+      date_str_en: this.SetMoment.format('Do')
     };
     let _return = PARSE_MODULE.Str2Mustache(this.Config.template.title, _obj);
 
