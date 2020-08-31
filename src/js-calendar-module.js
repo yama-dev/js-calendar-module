@@ -157,6 +157,21 @@ export class CALENDAR_MODULE {
   }
 
   static AnalyzeDate(y, m, d = 1) {
+    if(d <= 0 || d >= 32){
+      return {
+        current: {
+          year: y,
+          month: m + 1,
+          month_str: '',
+          month_str_en: '',
+          day_of_week_str_en: '',
+          month_id: m,
+          date: '',
+          date_str: '',
+          date_str_en: ''
+        }
+      };
+    }
     let _moment = moment([y, m, d]);
     let _momentPrev = moment([y, m, d]).subtract(1, 'months');
     let _momentNext = moment([y, m, d]).add(1, 'months');
@@ -249,19 +264,18 @@ export class CALENDAR_MODULE {
           _class_name += _class_name_parent;
         }
 
+        let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, val_date).current;
+
         // Create Calendar HTML data for one day.
-        let obj = {
-          year: this.Config.year,
-          month: this.Config.month,
-          month_id: this.Config.month_id,
-          date: val_date,
+        let obj = Object.assign(_date,
+          {
           index: index_date,
           class_name: _class_name,
           day_of_week: _date_day_of_week,
           date_data: _date_event_html
-        };
+          }
+        );
         _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
-
       });
     });
     return _html;
