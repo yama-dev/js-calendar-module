@@ -34,6 +34,13 @@ export class CALENDAR_MODULE {
     if (!options.template.date) options.template.date = '<div></div>';
     if (!options.template.date_data) options.template.date_data = '<div></div>';
 
+    this.Setting = {
+      day_of_week_list_all: [
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      ]
+    };
+
     // Set config, options.
     this.Config = {
       elem: options.elem || '.js-calendar',
@@ -53,7 +60,7 @@ export class CALENDAR_MODULE {
         date_data: options.template.date_data || null
       },
 
-      day_of_week_list: options.day_of_week_list || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      day_of_week_list: options.day_of_week_list || [],
 
       monday_start: options.monday_start === true ? 1 : null,
 
@@ -69,6 +76,12 @@ export class CALENDAR_MODULE {
 
       schedule_data: options.schedule_data || null
     };
+
+    if(!this.Config.monday_start){
+      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[0];
+    } else {
+      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[1];
+    }
 
     // Set callback functions.
     if (!options.on) options.on = {};
@@ -86,7 +99,6 @@ export class CALENDAR_MODULE {
     // DebugMode
     if (this.CurrentUrl.search(/localhost/) !== -1 || this.CurrentUrl.search(/192.168/) !== -1) {
       this.DebugMode();
-    } else {
     }
 
     // CacheElement
