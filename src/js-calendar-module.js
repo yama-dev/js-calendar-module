@@ -258,7 +258,7 @@ export class CALENDAR_MODULE {
           _date_event_data.map((val, index) => {
             if(val.category_en){
               _class_name_parent += ` u-has-${val.category_en}`;
-            } 
+            }
             _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
           });
           _class_name += _class_name_parent;
@@ -269,10 +269,10 @@ export class CALENDAR_MODULE {
         // Create Calendar HTML data for one day.
         let obj = Object.assign(_date,
           {
-          index: index_date,
-          class_name: _class_name,
-          day_of_week: _date_day_of_week,
-          date_data: _date_event_html
+            index: index_date,
+            class_name: _class_name,
+            day_of_week: _date_day_of_week,
+            date_data: _date_event_html
           }
         );
         _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
@@ -404,6 +404,17 @@ export class CALENDAR_MODULE {
 
     let _html_calendar = this.CreateCalendarHtml();
 
+    if(this.HtmlCalendar !== _html_calendar){
+      this.HtmlCalendar = _html_calendar;
+      this.OnChange();
+      if(isRender){
+        this.Render();
+      }
+    }
+  }
+
+  Update(isRender = true) {
+    let _html_calendar = this.CreateCalendarHtml();
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
       this.OnChange();
