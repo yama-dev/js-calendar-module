@@ -392,6 +392,27 @@ export class CALENDAR_MODULE {
     this.OnChange();
   }
 
+  AddData(_add_data = [], isRender = true) {
+    // Merge '_add_data' in 'schedule_data'
+    if(_add_data.length <= 0) return false;
+
+    let _data = [..._add_data, ...this.Config.schedule_data];
+
+    const uniqueObjects = [...new Map(_data.map(item => [item.id, item])).values()];
+
+    this.Config.schedule_data = uniqueObjects;
+
+    let _html_calendar = this.CreateCalendarHtml();
+
+    if(this.HtmlCalendar !== _html_calendar){
+      this.HtmlCalendar = _html_calendar;
+      this.OnChange();
+      if(isRender){
+        this.Render();
+      }
+    }
+  }
+
   Render() {
     // Auto Render in first time.
     if (this.Config.auto_render === false) {
