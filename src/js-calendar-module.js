@@ -1,7 +1,7 @@
 /*!
  * JS CALENDAR_MODULE (JavaScript Library)
  *   js-calendar-module.js
- * Version 0.2.1
+ * Version 0.3.0
  * Repository https://github.com/yama-dev/js-calendar-module
  * Author yama-dev
  * Licensed under the MIT license.
@@ -15,7 +15,7 @@ import { PARSE_MODULE } from 'js-parse-module';
 export class CALENDAR_MODULE {
   constructor(options = {}) {
     // Set Version.
-    this.Version = '0.2.1';
+    this.Version = '0.3.0';
 
     // Use for discrimination by URL.
     this.CurrentUrl = location.href;
@@ -33,6 +33,13 @@ export class CALENDAR_MODULE {
     if (!options.template.title_week) options.template.title_week = '<div>{{week}}</div>';
     if (!options.template.date) options.template.date = '<div></div>';
     if (!options.template.date_data) options.template.date_data = '<div></div>';
+
+    this.Setting = {
+      day_of_week_list_all: [
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      ]
+    };
 
     // Set config, options.
     this.Config = {
@@ -53,7 +60,7 @@ export class CALENDAR_MODULE {
         date_data: options.template.date_data || null
       },
 
-      day_of_week_list: options.day_of_week_list || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      day_of_week_list: options.day_of_week_list || [],
 
       monday_start: options.monday_start === true ? 1 : null,
 
@@ -69,6 +76,12 @@ export class CALENDAR_MODULE {
 
       schedule_data: options.schedule_data || null
     };
+
+    if(!this.Config.monday_start){
+      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[0];
+    } else {
+      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[1];
+    }
 
     // Set callback functions.
     if (!options.on) options.on = {};
@@ -86,7 +99,6 @@ export class CALENDAR_MODULE {
     // DebugMode
     if (this.CurrentUrl.search(/localhost/) !== -1 || this.CurrentUrl.search(/192.168/) !== -1) {
       this.DebugMode();
-    } else {
     }
 
     // CacheElement
@@ -123,7 +135,9 @@ export class CALENDAR_MODULE {
       month_str_en_lower: this.SetMoment.format('MMMM').toLowerCase(),
       day_of_week_str_en: this.SetMoment.format('dddd'),
       month_id: this.SetMoment.month(),
-      date: this.SetMoment.date()
+      date: this.SetMoment.date(),
+      date_str: this.SetMoment.format('DD'),
+      date_str_en: this.SetMoment.format('Do')
     };
     let _return = PARSE_MODULE.Str2Mustache(this.Config.template.title, _obj);
 
@@ -143,6 +157,21 @@ export class CALENDAR_MODULE {
   }
 
   static AnalyzeDate(y, m, d = 1) {
+    if(d <= 0 || d >= 32){
+      return {
+        current: {
+          year: y,
+          month: m + 1,
+          month_str: '',
+          month_str_en: '',
+          day_of_week_str_en: '',
+          month_id: m,
+          date: '',
+          date_str: '',
+          date_str_en: ''
+        }
+      };
+    }
     let _moment = moment([y, m, d]);
     let _momentPrev = moment([y, m, d]).subtract(1, 'months');
     let _momentNext = moment([y, m, d]).add(1, 'months');
@@ -153,27 +182,33 @@ export class CALENDAR_MODULE {
         month: _moment.month() + 1,
         month_str: _moment.format('MM'),
         month_str_en: _moment.format('MMMM'),
-        day_of_week_str_en_str_en: _moment.format('mmmm'),
+        day_of_week_str_en: _moment.format('dddd'),
         month_id: _moment.month(),
-        date: _moment.date()
+        date: _moment.date(),
+        date_str: _moment.format('DD'),
+        date_str_en: _moment.format('Do')
       },
       prev: {
         year: _momentPrev.year(),
         month: _momentPrev.month() + 1,
         month_str: _momentPrev.format('MM'),
         month_str_en: _momentPrev.format('MMMM'),
-        day_of_week_str_en_str_en: _momentPrev.format('mmmm'),
+        day_of_week_str_en: _momentPrev.format('dddd'),
         month_id: _momentPrev.month(),
-        date: _momentPrev.date()
+        date: _momentPrev.date(),
+        date_str: _momentPrev.format('DD'),
+        date_str_en: _momentPrev.format('Do')
       },
       next: {
         year: _momentNext.year(),
         month: _momentNext.month() + 1,
         month_str: _momentNext.format('MM'),
         month_str_en: _momentNext.format('MMMM'),
-        day_of_week_str_en_str_en: _momentNext.format('mmmm'),
+        day_of_week_str_en: _momentNext.format('dddd'),
         month_id: _momentNext.month(),
-        date: _momentNext.date()
+        date: _momentNext.date(),
+        date_str: _momentNext.format('DD'),
+        date_str_en: _momentNext.format('Do')
       }
     };
 
@@ -223,25 +258,24 @@ export class CALENDAR_MODULE {
           _date_event_data.map((val, index) => {
             if(val.category_en){
               _class_name_parent += ` u-has-${val.category_en}`;
-            } 
+            }
             _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
           });
           _class_name += _class_name_parent;
         }
 
-        // Create Calendar HTML data for one day.
-        let obj = {
-          year: this.Config.year,
-          month: this.Config.month,
-          month_id: this.Config.month_id,
-          date: val_date,
-          index: index_date,
-          class_name: _class_name,
-          day_of_week: _date_day_of_week,
-          date_data: _date_event_html
-        };
-        _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
+        let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, val_date).current;
 
+        // Create Calendar HTML data for one day.
+        let obj = Object.assign(_date,
+          {
+            index: index_date,
+            class_name: _class_name,
+            day_of_week: _date_day_of_week,
+            date_data: _date_event_html
+          }
+        );
+        _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
       });
     });
     return _html;
@@ -356,6 +390,38 @@ export class CALENDAR_MODULE {
     this.Render();
 
     this.OnChange();
+  }
+
+  AddData(_add_data = [], isRender = true) {
+    // Merge '_add_data' in 'schedule_data'
+    if(_add_data.length <= 0) return false;
+
+    let _data = [..._add_data, ...this.Config.schedule_data];
+
+    const uniqueObjects = [...new Map(_data.map(item => [item.id, item])).values()];
+
+    this.Config.schedule_data = uniqueObjects;
+
+    let _html_calendar = this.CreateCalendarHtml();
+
+    if(this.HtmlCalendar !== _html_calendar){
+      this.HtmlCalendar = _html_calendar;
+      this.OnChange();
+      if(isRender){
+        this.Render();
+      }
+    }
+  }
+
+  Update(isRender = true) {
+    let _html_calendar = this.CreateCalendarHtml();
+    if(this.HtmlCalendar !== _html_calendar){
+      this.HtmlCalendar = _html_calendar;
+      this.OnChange();
+      if(isRender){
+        this.Render();
+      }
+    }
   }
 
   Render() {
