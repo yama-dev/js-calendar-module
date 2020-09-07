@@ -10,12 +10,13 @@
   "license": "MIT",
   "main": "./dist/js-calendar-module.js",
   "scripts": {
-    "start": "npm install && npm run develop",
-    "develop": "npm-run-all -p webpack:develop server",
-    "production": "npm-run-all -p webpack:build server",
-    "server": "browser-sync start --server ./ --directory ./sample --files **/*.css **/*.js **/*.html",
-    "webpack:develop": "webpack --progress --colors --watch",
-    "webpack:build": "webpack --mode=production --progress --colors"
+    "start": "npm install && npm run dev",
+    "dev": "cross-env NODE_ENV=\"development\" npm-run-all -p build:develop server:develop",
+    "server:develop": "browser-sync start --server ./ --directory ./sample --files **/*.css **/*.js **/*.html",
+    "build:develop": "webpack --progress --colors --watch",
+    "prod": "cross-env NODE_ENV=\"production\" npm-run-all -p build:production server:production",
+    "server:production": "browser-sync start --server ./ --directory ./sample --files **/*.css **/*.js **/*.html",
+    "build:production": "webpack --progress --colors --watch"
   },
   "repository": {
     "type": "git",
