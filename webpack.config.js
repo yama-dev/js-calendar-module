@@ -16,17 +16,22 @@ const config = {
     rules: [
       {
         test: /\.js$/,
+        exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['env', {'modules': false}]
+                [
+                  '@babel/preset-env',
+                  {
+                    modules: false
+                  }
               ]
+              ],
             }
           }
         ],
-        exclude: /node_modules/,
       }
     ]
   }
