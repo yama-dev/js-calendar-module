@@ -1,12 +1,12 @@
 import { Calendar } from 'calendar';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { PARSE_MODULE } from 'js-parse-module';
 
 export class CALENDAR_MODULE {
   constructor(options = {}) {
     // Set Version.
-    this.Version = '0.3.0';
+    this.Version = process.env.VERSION;
 
     // Use for discrimination by URL.
     this.CurrentUrl = location.href;
@@ -14,9 +14,9 @@ export class CALENDAR_MODULE {
     // Data Calendar(HTML).
     this.HtmlCalendar = '';
 
-    // Moment Now.
-    this.NowMoment = moment();
-    this.SetMoment = moment();
+    // Date Now.
+    this.NowDt = dayjs();
+    this.SetDt = dayjs();
 
     // Adjust option template.
     if (!options.template) options.template = {};
@@ -39,10 +39,10 @@ export class CALENDAR_MODULE {
       elem_title_week: options.elem_title_week || '.js-calendar-title-week',
       elem_content: options.elem_content || '.js-calendar-content',
 
-      year: options.year || this.NowMoment.year(),
-      month: options.month || this.NowMoment.month() + 1,
-      month_id: options.month - 1 || this.NowMoment.month(),
-      date: options.month || this.NowMoment.date(),
+      year: options.year || this.NowDt.year(),
+      month: options.month || this.NowDt.month() + 1,
+      month_id: options.month - 1 || this.NowDt.month(),
+      date: options.month || this.NowDt.date(),
 
       template: {
         title: options.template.title || '<div>{{year}}.{{month}}</div>',
@@ -117,18 +117,17 @@ export class CALENDAR_MODULE {
   }
   HtmlTitle() {
     let _obj = {
-      year: this.SetMoment.year(),
-      month: this.SetMoment.month() + 1,
-      month_str: this.SetMoment.format('MM'),
-      month_str_en_short: this.SetMoment.format('MMM'),
-      month_str_en_short_lower: this.SetMoment.format('MMM').toLowerCase(),
-      month_str_en: this.SetMoment.format('MMMM'),
-      month_str_en_lower: this.SetMoment.format('MMMM').toLowerCase(),
-      day_of_week_str_en: this.SetMoment.format('dddd'),
-      month_id: this.SetMoment.month(),
-      date: this.SetMoment.date(),
-      date_str: this.SetMoment.format('DD'),
-      date_str_en: this.SetMoment.format('Do')
+      year: this.SetDt.year(),
+      month: this.SetDt.month() + 1,
+      month_str: this.SetDt.format('MM'),
+      month_str_en_short: this.SetDt.format('MMM'),
+      month_str_en_short_lower: this.SetDt.format('MMM').toLowerCase(),
+      month_str_en: this.SetDt.format('MMMM'),
+      month_str_en_lower: this.SetDt.format('MMMM').toLowerCase(),
+      day_of_week_str_en: this.SetDt.format('dddd'),
+      month_id: this.SetDt.month(),
+      date: this.SetDt.date(),
+      date_str: this.SetDt.format('DD')
     };
     let _return = PARSE_MODULE.Str2Mustache(this.Config.template.title, _obj);
 
@@ -163,43 +162,40 @@ export class CALENDAR_MODULE {
         }
       };
     }
-    let _moment = moment([y, m, d]);
-    let _momentPrev = moment([y, m, d]).subtract(1, 'months');
-    let _momentNext = moment([y, m, d]).add(1, 'months');
+    let _dt = dayjs([y, m + 1, d]);
+    let _dtPrev = dayjs([y, m + 1, d]).subtract(1, 'month');
+    let _dtNext = dayjs([y, m + 1, d]).add(1, 'month');
 
     let _return = {
       current: {
-        year: _moment.year(),
-        month: _moment.month() + 1,
-        month_str: _moment.format('MM'),
-        month_str_en: _moment.format('MMMM'),
-        day_of_week_str_en: _moment.format('dddd'),
-        month_id: _moment.month(),
-        date: _moment.date(),
-        date_str: _moment.format('DD'),
-        date_str_en: _moment.format('Do')
+        year: _dt.year(),
+        month: _dt.month() + 1,
+        month_str: _dt.format('MM'),
+        month_str_en: _dt.format('MMMM'),
+        day_of_week_str_en: _dt.format('dddd'),
+        month_id: _dt.month(),
+        date: _dt.date(),
+        date_str: _dt.format('DD')
       },
       prev: {
-        year: _momentPrev.year(),
-        month: _momentPrev.month() + 1,
-        month_str: _momentPrev.format('MM'),
-        month_str_en: _momentPrev.format('MMMM'),
-        day_of_week_str_en: _momentPrev.format('dddd'),
-        month_id: _momentPrev.month(),
-        date: _momentPrev.date(),
-        date_str: _momentPrev.format('DD'),
-        date_str_en: _momentPrev.format('Do')
+        year: _dtPrev.year(),
+        month: _dtPrev.month() + 1,
+        month_str: _dtPrev.format('MM'),
+        month_str_en: _dtPrev.format('MMMM'),
+        day_of_week_str_en: _dtPrev.format('dddd'),
+        month_id: _dtPrev.month(),
+        date: _dtPrev.date(),
+        date_str: _dtPrev.format('DD')
       },
       next: {
-        year: _momentNext.year(),
-        month: _momentNext.month() + 1,
-        month_str: _momentNext.format('MM'),
-        month_str_en: _momentNext.format('MMMM'),
-        day_of_week_str_en: _momentNext.format('dddd'),
-        month_id: _momentNext.month(),
-        date: _momentNext.date(),
-        date_str: _momentNext.format('DD'),
-        date_str_en: _momentNext.format('Do')
+        year: _dtNext.year(),
+        month: _dtNext.month() + 1,
+        month_str: _dtNext.format('MM'),
+        month_str_en: _dtNext.format('MMMM'),
+        day_of_week_str_en: _dtNext.format('dddd'),
+        month_id: _dtNext.month(),
+        date: _dtNext.date(),
+        date_str: _dtNext.format('DD')
       }
     };
 
@@ -225,9 +221,9 @@ export class CALENDAR_MODULE {
 
         // On Today.
         if (
-          val_date === this.NowMoment.date() &&
-          this.Config.year === this.NowMoment.year() &&
-          this.Config.month_id === this.NowMoment.month()
+          val_date === this.NowDt.date() &&
+          this.Config.year === this.NowDt.year() &&
+          this.Config.month_id === this.NowDt.month()
         ) {
           _class_name += ` ${this.Config.classname.today}`;
         }
@@ -272,7 +268,7 @@ export class CALENDAR_MODULE {
     return _html;
   }
 
-  GetEventData(y = this.NowMoment.year(), m = this.NowMoment.month(), d = this.NowMoment.date(), toHtml = false) {
+  GetEventData(y = this.NowDt.year(), m = this.NowDt.month(), d = this.NowDt.date(), toHtml = false) {
     /**
      * 1日のイベントを取得
      *
@@ -296,8 +292,8 @@ export class CALENDAR_MODULE {
     // Invalid value return.
     if (d == 0) return [];
 
-    let _moment_set = moment([y, m, d]);
-    let _moment = '';
+    let _dt_set = dayjs([y, m + 1, d]);
+    let _dt = '';
     let _event_item = [];
     let _event_item_html = '';
 
@@ -305,11 +301,11 @@ export class CALENDAR_MODULE {
       let _d = PARSE_MODULE.Str2DateFormat(val.date);
 
       if (_d.split('-')[0].match(/\d{4}/)) {
-        _moment = moment(_d);
+        _dt = dayjs(_d);
         if (
-          _moment_set.year() == _moment.year() &&
-          _moment_set.month() == _moment.month() &&
-          _moment_set.date() == _moment.date()
+          _dt_set.year() == _dt.year() &&
+          _dt_set.month() == _dt.month() &&
+          _dt_set.date() == _dt.date()
         ) {
           if (toHtml) {
             _event_item_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
@@ -321,10 +317,10 @@ export class CALENDAR_MODULE {
         // 年の指定がない場合(毎年と判断)
 
         // 当年でフォーマットを整形
-        _d = this.NowMoment.year() + '-' + _d;
-        _moment = moment(_d);
+        _d = this.NowDt.year() + '-' + _d;
+        _dt = dayjs(_d);
 
-        if (_moment_set.month() == _moment.month() && _moment_set.date() == _moment.date()) {
+        if (_dt_set.month() == _dt.month() && _dt_set.date() == _dt.date()) {
           if (toHtml) {
             _event_item_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
           } else {
@@ -355,8 +351,8 @@ export class CALENDAR_MODULE {
 
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
-    // Set Target Moment.
-    this.SetMoment = moment([this.Config.year, this.Config.month_id]);
+    // Set Target Date.
+    this.SetDt = dayjs([this.Config.year, this.Config.month_id + 1]);
     this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
 
@@ -374,8 +370,8 @@ export class CALENDAR_MODULE {
 
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
-    // Set Target Moment.
-    this.SetMoment = moment([this.Config.year, this.Config.month_id]);
+    // Set Target Date.
+    this.SetDt = dayjs([this.Config.year, this.Config.month_id + 1]);
 
     this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
