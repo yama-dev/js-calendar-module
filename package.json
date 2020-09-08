@@ -1,6 +1,6 @@
 {
   "name": "js-calendar-module",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Create Calender library.",
   "keywords": [
     "calendar",
@@ -40,8 +40,8 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "@yama-dev/js-parse-module": "^0.2.1",
     "calendar": "^0.1.1",
-    "js-parse-module": "0.0.3",
     "dayjs": "^1.8.35"
   },
   "babel": {

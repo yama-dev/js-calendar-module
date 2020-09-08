@@ -1,7 +1,9 @@
 import { Calendar } from 'calendar';
+
 import dayjs from 'dayjs';
 
-import { PARSE_MODULE } from 'js-parse-module';
+import { Str2Mustache } from '@yama-dev/js-parse-module/libs/str2mustache';
+import { Str2DateFormat } from '@yama-dev/js-parse-module/libs/str2dateformat';
 
 export class CALENDAR_MODULE {
   constructor(options = {}) {
@@ -20,10 +22,10 @@ export class CALENDAR_MODULE {
 
     // Adjust option template.
     if (!options.template) options.template = {};
-    if (!options.template.title) options.template.title = '<div>{{year}}.{{month}}</div>';
-    if (!options.template.title_week) options.template.title_week = '<div>{{week}}</div>';
-    if (!options.template.date) options.template.date = '<div></div>';
-    if (!options.template.date_data) options.template.date_data = '<div></div>';
+    if (!options.template.title) options.template.title = '<span class="year">{{year}}</span>/<span class="month">{{month_str}}</span>';
+    if (!options.template.title_week) options.template.title_week = '<span>{{week}}</span>';
+    if (!options.template.date) options.template.date = '<div class="{{class_name}}">{{date}} {{date_data}}</div>';
+    if (!options.template.date_data) options.template.date_data = '<div class="date_data"><div class="title">{{title}}</div><div class="article">{{article}}</div></div>';
 
     this.Setting = {
       day_of_week_list_all: [
@@ -45,8 +47,8 @@ export class CALENDAR_MODULE {
       date: options.month || this.NowDt.date(),
 
       template: {
-        title: options.template.title || '<div>{{year}}.{{month}}</div>',
-        title_week: options.template.title_week || '<div>{{week}}</div>',
+        title: options.template.title || null,
+        title_week: options.template.title_week || null,
         date: options.template.date || null,
         date_data: options.template.date_data || null
       },
@@ -129,7 +131,7 @@ export class CALENDAR_MODULE {
       date: this.SetDt.date(),
       date_str: this.SetDt.format('DD')
     };
-    let _return = PARSE_MODULE.Str2Mustache(this.Config.template.title, _obj);
+    let _return = Str2Mustache(this.Config.template.title, _obj);
 
     return _return;
   }
@@ -140,7 +142,7 @@ export class CALENDAR_MODULE {
       let _obj = {
         week: val
       };
-      _return += PARSE_MODULE.Str2Mustache(this.Config.template.title_week, _obj);
+      _return += Str2Mustache(this.Config.template.title_week, _obj);
     });
 
     return _return;
@@ -246,7 +248,7 @@ export class CALENDAR_MODULE {
             if(val.category_en){
               _class_name_parent += ` u-has-${val.category_en}`;
             }
-            _date_event_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
+            _date_event_html += Str2Mustache(this.Config.template.date_data, val);
           });
           _class_name += _class_name_parent;
         }
@@ -262,7 +264,7 @@ export class CALENDAR_MODULE {
             date_data: _date_event_html
           }
         );
-        _html += PARSE_MODULE.Str2Mustache(this.Config.template.date, obj);
+        _html += Str2Mustache(this.Config.template.date, obj);
       });
     });
     return _html;
@@ -298,7 +300,7 @@ export class CALENDAR_MODULE {
     let _event_item_html = '';
 
     this.Config.schedule_data.map((val, index) => {
-      let _d = PARSE_MODULE.Str2DateFormat(val.date);
+      let _d = Str2DateFormat(val.date);
 
       if (_d.split('-')[0].match(/\d{4}/)) {
         _dt = dayjs(_d);
@@ -308,7 +310,7 @@ export class CALENDAR_MODULE {
           _dt_set.date() == _dt.date()
         ) {
           if (toHtml) {
-            _event_item_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
+            _event_item_html += Str2Mustache(this.Config.template.date_data, val);
           } else {
             _event_item.push(val);
           }
@@ -322,7 +324,7 @@ export class CALENDAR_MODULE {
 
         if (_dt_set.month() == _dt.month() && _dt_set.date() == _dt.date()) {
           if (toHtml) {
-            _event_item_html += PARSE_MODULE.Str2Mustache(this.Config.template.date_data, val);
+            _event_item_html += Str2Mustache(this.Config.template.date_data, val);
           } else {
             _event_item.push(val);
           }
