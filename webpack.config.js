@@ -20,6 +20,10 @@ const webpackPlugEnv = new webpack.EnvironmentPlugin({
   DEBUG: false
 });
 
+const babelPlugin = [
+  '@babel/plugin-transform-object-assign'
+];
+
 const config = {
   mode: env || 'development',
   entry: {
@@ -34,7 +38,7 @@ const config = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /node_modules[//\/](?!(@yama\-dev)\/).*/,
         use: [
           {
             loader: 'babel-loader',
@@ -47,6 +51,7 @@ const config = {
                   }
                 ]
               ],
+              plugins: babelPlugin
             }
           }
         ],
