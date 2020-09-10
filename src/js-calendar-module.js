@@ -164,9 +164,9 @@ export class CALENDAR_MODULE {
         }
       };
     }
-    let _dt = dayjs([y, m + 1, d]);
-    let _dtPrev = dayjs([y, m + 1, d]).subtract(1, 'month');
-    let _dtNext = dayjs([y, m + 1, d]).add(1, 'month');
+    let _dt = dayjs(`${y}/${m + 1}/${d}`);
+    let _dtPrev = dayjs(`${y}/${m + 1}/${d}`).subtract(1, 'month');
+    let _dtNext = dayjs(`${y}/${m + 1}/${d}`).add(1, 'month');
 
     let _return = {
       current: {
@@ -294,7 +294,7 @@ export class CALENDAR_MODULE {
     // Invalid value return.
     if (d == 0) return [];
 
-    let _dt_set = dayjs([y, m + 1, d]);
+    let _dt_set = dayjs(`${y}/${m + 1}/${d}`);
     let _dt = '';
     let _event_item = [];
     let _event_item_html = '';
@@ -354,7 +354,7 @@ export class CALENDAR_MODULE {
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // Set Target Date.
-    this.SetDt = dayjs([this.Config.year, this.Config.month_id + 1]);
+    this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
     this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
 
@@ -373,7 +373,7 @@ export class CALENDAR_MODULE {
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // Set Target Date.
-    this.SetDt = dayjs([this.Config.year, this.Config.month_id + 1]);
+    this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
 
     this.HtmlCalendar = this.CreateCalendarHtml();
     this.Render();
@@ -385,9 +385,15 @@ export class CALENDAR_MODULE {
     // Merge '_add_data' in 'schedule_data'
     if(_add_data.length <= 0) return false;
 
-    let _data = [..._add_data, ...this.Config.schedule_data];
+    let _data = [...this.Config.schedule_data, ..._add_data];
 
-    const uniqueObjects = [...new Map(_data.map(item => [item.id, item])).values()];
+    let values = [];
+    const uniqueObjects = _data.filter(e => {
+      if (values.indexOf(e['id']) === -1) {
+        values.push(e['id']);
+        return e;
+      }
+    });
 
     this.Config.schedule_data = uniqueObjects;
 
