@@ -70,6 +70,10 @@ export class CALENDAR_MODULE {
       schedule_data: options.schedule_data || null
     };
 
+    this.State = {
+      calendar_data: null
+    };
+
     if(!this.Config.monday_start){
       this.Config.day_of_week_list = this.Setting.day_of_week_list_all[0];
     } else {
@@ -97,8 +101,10 @@ export class CALENDAR_MODULE {
     // CacheElement
     this.CacheElement();
 
+    // Create&Set Calendar
+    this.State.calendar_data = this.CreateCalendarData(false);
     // Create&Set Calendar (html)
-    this.HtmlCalendar = this.CreateCalendarHtml();
+    this.HtmlCalendar = this.CreateCalendarData();
 
     // Render Calendar.
     this.Render();
@@ -211,8 +217,9 @@ export class CALENDAR_MODULE {
     this.$uiElemTitleWeek = document.querySelector(this.Config.elem_title_week);
   }
 
-  CreateCalendarHtml() {
-    let _html = '';
+  CreateCalendarData(toHtml = true) {
+    let _data = [];
+    let _data_html = '';
 
     // Create Calendar HTML data for one month.
     this.CalendarData.map((val_week, index_week) => {
@@ -241,13 +248,17 @@ export class CALENDAR_MODULE {
         }
 
         let _class_name_parent = '';
+
+        let _date_event = [];
         let _date_event_html = '';
+
         if(_date_event_data.length){
           // Create Event data.
           _date_event_data.map((val, index) => {
             if(val.category_en){
               _class_name_parent += ` u-has-${val.category_en}`;
             }
+            _date_event.push(val);
             _date_event_html += Str2Mustache(this.Config.template.date_data, val);
           });
           _class_name += _class_name_parent;
@@ -261,13 +272,25 @@ export class CALENDAR_MODULE {
             index: index_date,
             class_name: _class_name,
             day_of_week: _date_day_of_week,
-            date_data: _date_event_html
+            date_data: _date_event_html,
+            date_data_ary: _date_event
           }
         );
-        _html += Str2Mustache(this.Config.template.date, obj);
+        if (toHtml) {
+          _data_html += Str2Mustache(this.Config.template.date, obj);
+        } else {
+          _data.push(obj);
+        }
       });
     });
-    return _html;
+    let _return = '';
+    if (toHtml) {
+      _return = _data_html;
+    } else {
+      _return = _data;
+    }
+
+    return _return;
   }
 
   GetEventData(y = this.NowDt.year(), m = this.NowDt.month(), d = this.NowDt.date(), toHtml = false) {
@@ -355,7 +378,9 @@ export class CALENDAR_MODULE {
 
     // Set Target Date.
     this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
-    this.HtmlCalendar = this.CreateCalendarHtml();
+    // Create&Set Calendar
+    this.State.calendar_data = this.CreateCalendarData(false);
+    this.HtmlCalendar = this.CreateCalendarData();
     this.Render();
 
     this.OnChange();
@@ -375,7 +400,9 @@ export class CALENDAR_MODULE {
     // Set Target Date.
     this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
 
-    this.HtmlCalendar = this.CreateCalendarHtml();
+    // Create&Set Calendar
+    this.State.calendar_data = this.CreateCalendarData(false);
+    this.HtmlCalendar = this.CreateCalendarData();
     this.Render();
 
     this.OnChange();
@@ -397,7 +424,10 @@ export class CALENDAR_MODULE {
 
     this.Config.schedule_data = uniqueObjects;
 
-    let _html_calendar = this.CreateCalendarHtml();
+    // Create&Set Calendar
+    this.State.calendar_data = this.CreateCalendarData(false);
+
+    let _html_calendar = this.CreateCalendarData();
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
@@ -409,7 +439,10 @@ export class CALENDAR_MODULE {
   }
 
   Update(isRender = true) {
-    let _html_calendar = this.CreateCalendarHtml();
+    // Create&Set Calendar
+    this.State.calendar_data = this.CreateCalendarData(false);
+
+    let _html_calendar = this.CreateCalendarData();
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
       this.OnChange();
@@ -439,11 +472,11 @@ export class CALENDAR_MODULE {
 
   OnLoad() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
-    if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date);
+    if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State);
   }
 
   OnChange() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
-    if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date);
+    if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State);
   }
 }
