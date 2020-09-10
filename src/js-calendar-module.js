@@ -137,7 +137,13 @@ export class CALENDAR_MODULE {
       date: this.SetDt.date(),
       date_str: this.SetDt.format('DD')
     };
-    let _return = Str2Mustache(this.Config.template.title, _obj);
+    let _return = '';
+    if(typeof this.Config.template.title === 'function' ){
+      let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
+      _return = Str2Mustache(this.Config.template.title(_date), _obj);
+    } else {
+      _return = Str2Mustache(this.Config.template.title, _obj);
+    }
 
     return _return;
   }
@@ -148,7 +154,12 @@ export class CALENDAR_MODULE {
       let _obj = {
         week: val
       };
-      _return += Str2Mustache(this.Config.template.title_week, _obj);
+      if(typeof this.Config.template.title_week === 'function' ){
+        let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
+        _return += Str2Mustache(this.Config.template.title_week(_date), _obj);
+      } else {
+        _return += Str2Mustache(this.Config.template.title_week, _obj);
+      }
     });
 
     return _return;
