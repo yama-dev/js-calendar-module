@@ -16,7 +16,8 @@
     "build:develop": "webpack --progress --colors --watch",
     "prod": "cross-env NODE_ENV=\"production\" npm-run-all -p build:production server:production",
     "server:production": "browser-sync start --server ./ --directory ./sample --files **/*.css **/*.js **/*.html",
-    "build:production": "webpack --progress --colors --watch"
+    "build:production": "webpack --progress --colors --watch",
+    "deploy": "cross-env NODE_ENV=\"production\" npm-run-all -p build:production"
   },
   "repository": {
     "type": "git",
