@@ -376,6 +376,65 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
+  GetEventDataCount(y = this.NowDt.year(), m = this.NowDt.month(), d = this.NowDt.date(), c = 10, toHtml = false) {
+    /**
+     * 指定した個数のイベントを取得
+     *
+     * @attribute y
+     * @type int
+     * @default [now year]
+     *
+     * @attribute m
+     * @type int
+     * @default [now month] *Start From 0
+     *
+     * @attribute d
+     * @type int
+     * @default [now d]
+     *
+     * @attribute c
+     * @type int
+     * @default 10
+     *
+     * @attribute toHtml
+     * @type boolean
+     * @default false
+     */
+
+    // Invalid value return.
+    if (d == 0) return [];
+
+    let _dt_set = dayjs(`${y}/${m + 1}/${d}`);
+    let _dt = '';
+    let _event_item = [];
+    let _event_item_html = '';
+
+    let _set_item_count = 0;
+
+    this.Config.schedule_data.map((val, index) => {
+      let _d = Str2DateFormat(val.date);
+      _dt = dayjs(_d);
+
+      if(_dt.diff(_dt_set) >= 0 && _set_item_count < c){
+        _set_item_count++;
+        if (toHtml) {
+          _event_item_html += Str2Mustache(this.Config.template.date_data, val);
+        } else {
+          _event_item.push(val);
+        }
+      }
+    });
+
+    let _return = '';
+    if (toHtml) {
+      _return = _event_item_html;
+    } else {
+      _return = _event_item;
+    }
+
+    return _return;
+  }
+
   Prev() {
     // Prev.
 
