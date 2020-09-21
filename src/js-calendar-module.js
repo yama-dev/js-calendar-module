@@ -483,11 +483,11 @@ export class CALENDAR_MODULE {
 
   OnLoad() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
-    if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State);
+    if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State, this);
   }
 
   OnChange() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
-    if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State);
+    if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State, this);
   }
 }
