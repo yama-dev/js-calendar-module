@@ -448,7 +448,33 @@ export class CALENDAR_MODULE {
     if (toHtml) {
       _return = _event_item_html;
     } else {
-      _return = _event_item;
+      _return = {
+        result: _event_item,
+        html: _event_item_html
+      };
+
+      if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
+        let _dt_prev = _dt_set.subtract(c+1, countType);
+        let _dt_next = _dt_set.add(c, countType);
+
+        _return.prev_data = {
+          date: _dt_prev.format(),
+          year: _dt_prev.year(),
+          month: _dt_prev.month(),
+          month_id: _dt_prev.month(),
+          month_str: _dt_prev.month()+1,
+          day: _dt_prev.date(),
+        };
+
+        _return.next_data = {
+          date: _dt_next.format(),
+          year: _dt_next.year(),
+          month: _dt_next.month(),
+          month_id: _dt_next.month(),
+          month_str: _dt_next.month()+1,
+          day: _dt_next.date(),
+        };
+      }
     }
 
     return _return;
