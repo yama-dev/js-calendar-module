@@ -432,14 +432,34 @@ export class CALENDAR_MODULE {
 
     this.Config.schedule_data.map((val, index) => {
       let _d = Str2DateFormat(val.date);
-      _dt = dayjs(_d);
+
+      if (_d.split('-')[0].match(/\d{4}/)) {
+        _dt = dayjs(_d);
+      } else {
+        // 年の指定がない場合(毎年と判断)
+        // 当年でフォーマットを整形
+        _d = this.NowDt.year() + '-' + _d;
+        _dt = dayjs(_d);
+      }
 
       if(_dt.diff(_dt_set) >= 0 && _set_item_count < c){
-        _set_item_count++;
-        if (toHtml) {
+        if(countType === 'number'){
+          // 個数カウントの場合
+
+          _set_item_count++;
+
           _event_item_html += Str2Mustache(this.Config.template.date_data, val);
-        } else {
           _event_item.push(val);
+
+        } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
+          // 特定の期間でカウントの場合
+
+          let _dt_end = _dt_set.add(c-1, countType);
+
+          if(_dt.diff(_dt_end) <= 0){
+            _event_item_html += Str2Mustache(this.Config.template.date_data, val);
+            _event_item.push(val);
+          }
         }
       }
     });
