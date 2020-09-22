@@ -376,7 +376,7 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
-  GetEventDataCount(y = this.NowDt.year(), m = this.NowDt.month(), d = this.NowDt.date(), c = 10, toHtml = false) {
+  GetEventDataCount(obj) {
     /**
      * 指定した個数のイベントを取得
      *
@@ -396,10 +396,29 @@ export class CALENDAR_MODULE {
      * @type int
      * @default 10
      *
+     * @attribute countType
+     * @type str
+     * @default 'number'
+     *
      * @attribute toHtml
      * @type boolean
      * @default false
      */
+
+    const {
+      year: y,
+      month,
+      month_id = null,
+      month_str = null,
+      day: d,
+      count: c,
+      countType = 'number',
+      toHtml,
+    } = obj;
+
+    let m = month;
+    if(month_id) m = month_id;
+    if(month_str) m = Number(month_str) - 1;
 
     // Invalid value return.
     if (d == 0) return [];
