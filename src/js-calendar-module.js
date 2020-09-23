@@ -589,15 +589,18 @@ export class CALENDAR_MODULE {
       return false;
     }
 
-    // Delete content.
-    this.$uiElemContent.innerHTML = '';
-    this.$uiElemTitle.innerHTML = '';
-    this.$uiElemTitleWeek.innerHTML = '';
-
-    // Render content.
-    this.$uiElemContent.innerHTML = this.HtmlCalendar;
+    // render html.
+    if(this.$uiElemTitle){
     this.$uiElemTitle.innerHTML = this.HtmlTitle();
+    }
+
+    if(this.$uiElemTitleWeek){
     this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek();
+  }
+
+    if(this.$uiElemContent){
+      this.$uiElemContent.innerHTML = this.HtmlCalendar;
+    }
   }
 
   OnLoad() {
