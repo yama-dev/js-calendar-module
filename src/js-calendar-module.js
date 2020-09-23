@@ -253,7 +253,7 @@ export class CALENDAR_MODULE {
     let _dt_set = dayjs(`${year}/${m + 1}/${day}`);
 
     if(countType === 'default'){
-    // Create Calendar HTML data for one month.
+      // Create Calendar HTML data for one month.
 
       calendar.map((val_week, index_week) => {
         calendar[index_week].map((val_date, index_date) => {
@@ -333,7 +333,7 @@ export class CALENDAR_MODULE {
       day,
     } = obj;
 
-        let _class_name = this.Config.classname.date;
+    let _class_name = this.Config.classname.date;
 
     // Get Event-Data on Target-Day.
     let _date_event_data_obj = this.GetEventData({
@@ -344,56 +344,56 @@ export class CALENDAR_MODULE {
     let _date_event_data = _date_event_data_obj.result;
 
     // Set day-of-week.
-        let _date_day_of_week = this.Config.day_of_week_list[index_date % 7];
+    let _date_day_of_week = this.Config.day_of_week_list[index_date % 7];
 
-        // On Today.
-        if (
+    // On Today.
+    if (
       day === this.NowDt.date() &&
-          this.Config.year === this.NowDt.year() &&
-          this.Config.month_id === this.NowDt.month()
-        ) {
-          _class_name += ` ${this.Config.classname.today}`;
-        }
+      this.Config.year === this.NowDt.year() &&
+      this.Config.month_id === this.NowDt.month()
+    ) {
+      _class_name += ` ${this.Config.classname.today}`;
+    }
 
-        // Not this Month.
+    // Not this Month.
     if (!day) _class_name += ` ${this.Config.classname.date_disable}`;
 
-        // When has event data.
-        if (_date_event_data.length) {
-          _class_name += ` ${this.Config.classname.date_hasevent}`;
-        } else {
-          _class_name += ` ${this.Config.classname.date_noevent}`;
-        }
+    // When has event data.
+    if (_date_event_data.length) {
+      _class_name += ` ${this.Config.classname.date_hasevent}`;
+    } else {
+      _class_name += ` ${this.Config.classname.date_noevent}`;
+    }
 
-        let _date_event = [];
-        let _date_event_html = '';
-        if(_date_event_data.length){
-          // Create Event data.
+    let _date_event = [];
+    let _date_event_html = '';
+    if(_date_event_data.length){
+      // Create Event data.
 
       let _class_name_parent = '';
 
-          _date_event_data.map((val, index) => {
-            if(val.category_en){
-              _class_name_parent += ` u-has-${val.category_en}`;
-            }
-            _date_event.push(val);
-            _date_event_html += Str2Mustache(this.Config.template.date_data, val);
-          });
-          _class_name += _class_name_parent;
+      _date_event_data.map((val, index) => {
+        if(val.category_en){
+          _class_name_parent += ` u-has-${val.category_en}`;
         }
+        _date_event.push(val);
+        _date_event_html += Str2Mustache(this.Config.template.date_data, val);
+      });
+      _class_name += _class_name_parent;
+    }
 
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, day).current;
 
-        // Create Calendar HTML data for one day.
+    // Create Calendar HTML data for one day.
     let _return = Object.assign(_date,
-          {
-            index: index_date,
-            class_name: _class_name,
-            day_of_week: _date_day_of_week,
-            date_data: _date_event_html,
-            date_data_ary: _date_event
-          }
-        );
+      {
+        index: index_date,
+        class_name: _class_name,
+        day_of_week: _date_day_of_week,
+        date_data: _date_event_html,
+        date_data_ary: _date_event
+      }
+    );
 
     return _return;
   }
@@ -547,8 +547,8 @@ export class CALENDAR_MODULE {
     // Set Target Date.
     this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
-    this.HtmlCalendar = this.CreateCalendarData();
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
+    this.HtmlCalendar = this.State.calendar_data.html;
     this.Render();
 
     this.OnChange();
@@ -569,8 +569,8 @@ export class CALENDAR_MODULE {
     this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
 
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
-    this.HtmlCalendar = this.CreateCalendarData();
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
+    this.HtmlCalendar = this.State.calendar_data.html;
     this.Render();
 
     this.OnChange();
@@ -593,9 +593,9 @@ export class CALENDAR_MODULE {
     this.Config.schedule_data = uniqueObjects;
 
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
 
-    let _html_calendar = this.CreateCalendarData();
+    let _html_calendar = this.State.calendar_data.html;
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
@@ -608,9 +608,10 @@ export class CALENDAR_MODULE {
 
   Update(isRender = true) {
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
 
-    let _html_calendar = this.CreateCalendarData();
+    let _html_calendar = this.State.calendar_data.html;
+
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
       this.OnChange();
@@ -629,12 +630,12 @@ export class CALENDAR_MODULE {
 
     // render html.
     if(this.$uiElemTitle){
-    this.$uiElemTitle.innerHTML = this.HtmlTitle();
+      this.$uiElemTitle.innerHTML = this.HtmlTitle();
     }
 
     if(this.$uiElemTitleWeek){
-    this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek();
-  }
+      this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek();
+    }
 
     if(this.$uiElemContent){
       this.$uiElemContent.innerHTML = this.HtmlCalendar;
