@@ -27,13 +27,6 @@ export class CALENDAR_MODULE {
     if (!options.template.date) options.template.date = '<div class="{{class_name}}">{{date}} {{date_data}}</div>';
     if (!options.template.date_data) options.template.date_data = '<div class="date_data"><div class="title">{{title}}</div><div class="article">{{article}}</div></div>';
 
-    this.Setting = {
-      day_of_week_list_all: [
-        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      ]
-    };
-
     // Set config, options.
     this.Config = {
       elem: options.elem || '.js-calendar',
@@ -53,7 +46,7 @@ export class CALENDAR_MODULE {
         date_data: options.template.date_data || null
       },
 
-      day_of_week_list: options.day_of_week_list || [],
+      day_of_week_list: options.day_of_week_list || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 
       monday_start: options.monday_start === true ? 1 : null,
 
@@ -71,14 +64,9 @@ export class CALENDAR_MODULE {
     };
 
     this.State = {
-      calendar_data: null
+      week_data: null,
+      calendar_data: null,
     };
-
-    if(!this.Config.monday_start){
-      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[0];
-    } else {
-      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[1];
-    }
 
     // Set callback functions.
     if (!options.on) options.on = {};
@@ -89,8 +77,15 @@ export class CALENDAR_MODULE {
       Next: options.on.Next || ''
     };
 
+    // Set Day-Of-Week list. (for Display)
+    let _day_of_week_list = this.Config.day_of_week_list.concat();
+    if(this.Config.monday_start){
+      let _shift = _day_of_week_list.shift();
+      _day_of_week_list.push(_shift);
+    }
+    this.State.week_data = _day_of_week_list;
+
     // Data Calendar(obj).
-    /** @type {Object} */
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // DebugMode
@@ -150,7 +145,7 @@ export class CALENDAR_MODULE {
   HtmlTitleWeek() {
     let _return = '';
 
-    this.Config.day_of_week_list.map(val => {
+    this.State.week_data.map(val => {
       let _obj = {
         week: val
       };
