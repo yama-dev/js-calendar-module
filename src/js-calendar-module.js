@@ -400,15 +400,17 @@ export class CALENDAR_MODULE {
      * @default false
      */
 
+    if (!obj) return [];
+
     const {
       year: y,
       month,
       month_id = null,
       month_str = null,
       day: d,
-      count: c,
-      countType = 'number',
-      toHtml,
+      count = 1,
+      countType = 'day', // 'day' | 'number'
+      toHtml = false,
     } = obj;
 
     let m = month;
@@ -416,7 +418,16 @@ export class CALENDAR_MODULE {
     if(month_str) m = Number(month_str) - 1;
 
     // Invalid value return.
-    if (d == 0) return [];
+    if(d == 0){
+      if (toHtml) {
+        return '';
+      } else {
+        return {
+          result: [],
+          html: ''
+        };
+      }
+    }
 
     let _dt_set = dayjs(`${y}/${m + 1}/${d}`);
     let _dt = '';
@@ -437,7 +448,7 @@ export class CALENDAR_MODULE {
         _dt = dayjs(_d);
       }
 
-      if(_dt.diff(_dt_set) >= 0 && _set_item_count < c){
+      if(_dt.diff(_dt_set) >= 0 && _set_item_count < count){
         if(countType === 'number'){
           // 個数カウントの場合
 
@@ -449,7 +460,7 @@ export class CALENDAR_MODULE {
         } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
           // 特定の期間でカウントの場合
 
-          let _dt_end = _dt_set.add(c-1, countType);
+          let _dt_end = _dt_set.add(count - 1, countType);
 
           if(_dt.diff(_dt_end) <= 0){
             _event_item_html += Str2Mustache(this.Config.template.date_data, val);
@@ -469,8 +480,8 @@ export class CALENDAR_MODULE {
       };
 
       if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
-        let _dt_prev = _dt_set.subtract(c+1, countType);
-        let _dt_next = _dt_set.add(c, countType);
+        let _dt_prev = _dt_set.subtract(count, countType);
+        let _dt_next = _dt_set.add(count, countType);
 
         _return.prev_data = {
           date: _dt_prev.format(),
