@@ -27,13 +27,6 @@ export class CALENDAR_MODULE {
     if (!options.template.date) options.template.date = '<div class="{{class_name}}">{{date}} {{date_data}}</div>';
     if (!options.template.date_data) options.template.date_data = '<div class="date_data"><div class="title">{{title}}</div><div class="article">{{article}}</div></div>';
 
-    this.Setting = {
-      day_of_week_list_all: [
-        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      ]
-    };
-
     // Set config, options.
     this.Config = {
       elem: options.elem || '.js-calendar',
@@ -53,7 +46,7 @@ export class CALENDAR_MODULE {
         date_data: options.template.date_data || null
       },
 
-      day_of_week_list: options.day_of_week_list || [],
+      day_of_week_list: options.day_of_week_list || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 
       monday_start: options.monday_start === true ? 1 : null,
 
@@ -71,14 +64,9 @@ export class CALENDAR_MODULE {
     };
 
     this.State = {
-      calendar_data: null
+      week_data: null,
+      calendar_data: null,
     };
-
-    if(!this.Config.monday_start){
-      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[0];
-    } else {
-      this.Config.day_of_week_list = this.Setting.day_of_week_list_all[1];
-    }
 
     // Set callback functions.
     if (!options.on) options.on = {};
@@ -89,8 +77,15 @@ export class CALENDAR_MODULE {
       Next: options.on.Next || ''
     };
 
+    // Set Day-Of-Week list. (for Display)
+    let _day_of_week_list = this.Config.day_of_week_list.concat();
+    if(this.Config.monday_start){
+      let _shift = _day_of_week_list.shift();
+      _day_of_week_list.push(_shift);
+    }
+    this.State.week_data = _day_of_week_list;
+
     // Data Calendar(obj).
-    /** @type {Object} */
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // DebugMode
@@ -102,9 +97,14 @@ export class CALENDAR_MODULE {
     this.CacheElement();
 
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
+    this.State.calendar_data = this.CreateCalendarData({
+      toHtml: false,
+      year: this.Config.year,
+      month_id: this.Config.month_id,
+      day: 1,
+    });
     // Create&Set Calendar (html)
-    this.HtmlCalendar = this.CreateCalendarData();
+    this.HtmlCalendar = this.State.calendar_data.html;
 
     // Render Calendar.
     this.Render();
@@ -150,7 +150,7 @@ export class CALENDAR_MODULE {
   HtmlTitleWeek() {
     let _return = '';
 
-    this.Config.day_of_week_list.map(val => {
+    this.State.week_data.map(val => {
       let _obj = {
         week: val
       };
@@ -228,85 +228,179 @@ export class CALENDAR_MODULE {
     this.$uiElemTitleWeek = document.querySelector(this.Config.elem_title_week);
   }
 
-  CreateCalendarData(toHtml = true) {
+  CreateCalendarData(obj = {}) {
     let _data = [];
     let _data_html = '';
 
-    // Create Calendar HTML data for one month.
-    this.CalendarData.map((val_week, index_week) => {
-      this.CalendarData[index_week].map((val_date, index_date) => {
-        let _class_name = this.Config.classname.date;
-        let _date_event_data = this.GetEventData(this.Config.year, this.Config.month_id, val_date, false);
-        let _date_day_of_week = this.Config.day_of_week_list[index_date % 7];
+    if (!obj) return [];
 
-        // On Today.
-        if (
-          val_date === this.NowDt.date() &&
-          this.Config.year === this.NowDt.year() &&
-          this.Config.month_id === this.NowDt.month()
-        ) {
-          _class_name += ` ${this.Config.classname.today}`;
-        }
+    const {
+      calendar = this.CalendarData,
+      year = this.Config.year,
+      month = this.Config.month,
+      month_id = null,
+      month_str = null,
+      day = 1,
+      count = 31,
+      countType = 'default',
+      toHtml = false,
+    } = obj;
 
-        // Not this Month.
-        if (!val_date) _class_name += ` ${this.Config.classname.date_disable}`;
+    let m = Number(month) - 1;
+    if(month_id) m = month_id;
+    if(month_str) m = Number(month_str) - 1;
 
-        // When has event data.
-        if (_date_event_data.length) {
-          _class_name += ` ${this.Config.classname.date_hasevent}`;
-        } else {
-          _class_name += ` ${this.Config.classname.date_noevent}`;
-        }
+    let _dt_set = dayjs(`${year}/${m + 1}/${day}`);
 
-        let _class_name_parent = '';
+    if(countType === 'default'){
+      // Create Calendar HTML data for one month.
 
-        let _date_event = [];
-        let _date_event_html = '';
+      calendar.map((val_week, index_week) => {
+        calendar[index_week].map((val_date, index_date) => {
 
-        if(_date_event_data.length){
-          // Create Event data.
-          _date_event_data.map((val, index) => {
-            if(val.category_en){
-              _class_name_parent += ` u-has-${val.category_en}`;
-            }
-            _date_event.push(val);
-            _date_event_html += Str2Mustache(this.Config.template.date_data, val);
+          let _one_day_obj = this.CreateCalendarDataItem({
+            index_date,
+            year: this.Config.year,
+            month_id: this.Config.month_id,
+            day: val_date,
           });
-          _class_name += _class_name_parent;
-        }
 
-        let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, val_date).current;
-
-        // Create Calendar HTML data for one day.
-        let obj = Object.assign(_date,
-          {
-            index: index_date,
-            class_name: _class_name,
-            day_of_week: _date_day_of_week,
-            date_data: _date_event_html,
-            date_data_ary: _date_event
-          }
-        );
-        if (toHtml) {
-          _data_html += Str2Mustache(this.Config.template.date, obj);
-        } else {
-          _data.push(obj);
-        }
+          _data.push(_one_day_obj);
+          _data_html += Str2Mustache(this.Config.template.date, _one_day_obj);
+        });
       });
-    });
+
+    } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
+      // 特定の期間でカウントの場合
+
+      let _dt_end = _dt_set.add(count - 1, countType);
+      for (var _i = 0; _i < count; _i++) {
+        let _dt = _dt_set.add(_i, countType);
+
+        let _one_day_obj = this.CreateCalendarDataItem({
+          index_date: _dt.day(),
+          year: _dt.year(),
+          month_id: _dt.month(),
+          day: _dt.date(),
+        });
+
+        _data.push(_one_day_obj);
+        _data_html += Str2Mustache(this.Config.template.date, _one_day_obj);
+      }
+    }
+
     let _return = '';
     if (toHtml) {
       _return = _data_html;
     } else {
-      _return = _data;
+      _return = {
+        result: _data,
+        html: _data_html,
+      };
+    }
+
+    if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
+      let _dt_prev = _dt_set.subtract(count, countType);
+      let _dt_next = _dt_set.add(count, countType);
+
+      _return.prev_data = {
+        date: _dt_prev.format(),
+        year: _dt_prev.year(),
+        month: _dt_prev.month(),
+        month_id: _dt_prev.month(),
+        month_str: _dt_prev.month()+1,
+        day: _dt_prev.date(),
+      };
+
+      _return.next_data = {
+        date: _dt_next.format(),
+        year: _dt_next.year(),
+        month: _dt_next.month(),
+        month_id: _dt_next.month(),
+        month_str: _dt_next.month()+1,
+        day: _dt_next.date(),
+      };
     }
 
     return _return;
   }
 
-  GetEventData(y = this.NowDt.year(), m = this.NowDt.month(), d = this.NowDt.date(), toHtml = false) {
+  CreateCalendarDataItem(obj = {}) {
+    const {
+      index_date,
+      year,
+      month_id,
+      day,
+    } = obj;
+
+    let _class_name = this.Config.classname.date;
+
+    // Get Event-Data on Target-Day.
+    let _date_event_data_obj = this.GetEventData({
+      year: year,
+      month_id: month_id,
+      day: day,
+    });
+    let _date_event_data = _date_event_data_obj.result;
+
+    // Set day-of-week.
+    let _date_day_of_week = this.Config.day_of_week_list[index_date % 7];
+
+    // On Today.
+    if (
+      day === this.NowDt.date() &&
+      this.Config.year === this.NowDt.year() &&
+      this.Config.month_id === this.NowDt.month()
+    ) {
+      _class_name += ` ${this.Config.classname.today}`;
+    }
+
+    // Not this Month.
+    if (!day) _class_name += ` ${this.Config.classname.date_disable}`;
+
+    // When has event data.
+    if (_date_event_data.length) {
+      _class_name += ` ${this.Config.classname.date_hasevent}`;
+    } else {
+      _class_name += ` ${this.Config.classname.date_noevent}`;
+    }
+
+    let _date_event = [];
+    let _date_event_html = '';
+    if(_date_event_data.length){
+      // Create Event data.
+
+      let _class_name_parent = '';
+
+      _date_event_data.map((val, index) => {
+        if(val.category_en){
+          _class_name_parent += ` u-has-${val.category_en}`;
+        }
+        _date_event.push(val);
+        _date_event_html += Str2Mustache(this.Config.template.date_data, val);
+      });
+      _class_name += _class_name_parent;
+    }
+
+    let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, day).current;
+
+    // Create Calendar HTML data for one day.
+    let _return = Object.assign(_date,
+      {
+        index: index_date,
+        class_name: _class_name,
+        day_of_week: _date_day_of_week,
+        date_data: _date_event_html,
+        date_data_ary: _date_event
+      }
+    );
+
+    return _return;
+  }
+
+  GetEventData(obj) {
     /**
-     * 1日のイベントを取得
+     * 指定した個数のイベントを取得
      *
      * @attribute y
      * @type int
@@ -320,46 +414,83 @@ export class CALENDAR_MODULE {
      * @type int
      * @default [now d]
      *
+     * @attribute c
+     * @type int
+     * @default 10
+     *
+     * @attribute countType
+     * @type str
+     * @default 'number'
+     *
      * @attribute toHtml
      * @type boolean
      * @default false
      */
 
+    if (!obj) return [];
+
+    const {
+      year: y,
+      month,
+      month_id = null,
+      month_str = null,
+      day: d,
+      count = 1,
+      countType = 'day', // 'day' | 'number'
+      toHtml = false,
+    } = obj;
+
+    let m = month;
+    if(month_id) m = month_id;
+    if(month_str) m = Number(month_str) - 1;
+
     // Invalid value return.
-    if (d == 0) return [];
+    if(d == 0){
+      if (toHtml) {
+        return '';
+      } else {
+        return {
+          result: [],
+          html: ''
+        };
+      }
+    }
 
     let _dt_set = dayjs(`${y}/${m + 1}/${d}`);
     let _dt = '';
     let _event_item = [];
     let _event_item_html = '';
 
+    let _set_item_count = 0;
+
     this.Config.schedule_data.map((val, index) => {
       let _d = Str2DateFormat(val.date);
 
       if (_d.split('-')[0].match(/\d{4}/)) {
         _dt = dayjs(_d);
-        if (
-          _dt_set.year() == _dt.year() &&
-          _dt_set.month() == _dt.month() &&
-          _dt_set.date() == _dt.date()
-        ) {
-          if (toHtml) {
-            _event_item_html += Str2Mustache(this.Config.template.date_data, val);
-          } else {
-            _event_item.push(val);
-          }
-        }
       } else {
         // 年の指定がない場合(毎年と判断)
-
         // 当年でフォーマットを整形
         _d = this.NowDt.year() + '-' + _d;
         _dt = dayjs(_d);
+      }
 
-        if (_dt_set.month() == _dt.month() && _dt_set.date() == _dt.date()) {
-          if (toHtml) {
+      if(_dt.diff(_dt_set) >= 0 && _set_item_count < count){
+        if(countType === 'number'){
+          // 個数カウントの場合
+
+          _set_item_count++;
+
+          _event_item_html += Str2Mustache(this.Config.template.date_data, val);
+          _event_item.push(val);
+
+        } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
+          // 特定の期間でカウントの場合
+
+          let _dt_end = _dt_set.add(count - 1, countType);
+
+          if(_dt.diff(_dt_end) <= 0){
             _event_item_html += Str2Mustache(this.Config.template.date_data, val);
-          } else {
             _event_item.push(val);
           }
         }
@@ -370,7 +501,33 @@ export class CALENDAR_MODULE {
     if (toHtml) {
       _return = _event_item_html;
     } else {
-      _return = _event_item;
+      _return = {
+        result: _event_item,
+        html: _event_item_html
+      };
+
+      if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
+        let _dt_prev = _dt_set.subtract(count, countType);
+        let _dt_next = _dt_set.add(count, countType);
+
+        _return.prev_data = {
+          date: _dt_prev.format(),
+          year: _dt_prev.year(),
+          month: _dt_prev.month(),
+          month_id: _dt_prev.month(),
+          month_str: _dt_prev.month()+1,
+          day: _dt_prev.date(),
+        };
+
+        _return.next_data = {
+          date: _dt_next.format(),
+          year: _dt_next.year(),
+          month: _dt_next.month(),
+          month_id: _dt_next.month(),
+          month_str: _dt_next.month()+1,
+          day: _dt_next.date(),
+        };
+      }
     }
 
     return _return;
@@ -390,8 +547,8 @@ export class CALENDAR_MODULE {
     // Set Target Date.
     this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
-    this.HtmlCalendar = this.CreateCalendarData();
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
+    this.HtmlCalendar = this.State.calendar_data.html;
     this.Render();
 
     this.OnChange();
@@ -412,8 +569,8 @@ export class CALENDAR_MODULE {
     this.SetDt = dayjs(`${this.Config.year}/${this.Config.month_id + 1}`);
 
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
-    this.HtmlCalendar = this.CreateCalendarData();
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
+    this.HtmlCalendar = this.State.calendar_data.html;
     this.Render();
 
     this.OnChange();
@@ -436,9 +593,9 @@ export class CALENDAR_MODULE {
     this.Config.schedule_data = uniqueObjects;
 
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
 
-    let _html_calendar = this.CreateCalendarData();
+    let _html_calendar = this.State.calendar_data.html;
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
@@ -451,9 +608,10 @@ export class CALENDAR_MODULE {
 
   Update(isRender = true) {
     // Create&Set Calendar
-    this.State.calendar_data = this.CreateCalendarData(false);
+    this.State.calendar_data = this.CreateCalendarData({toHtml:false});
 
-    let _html_calendar = this.CreateCalendarData();
+    let _html_calendar = this.State.calendar_data.html;
+
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
       this.OnChange();
@@ -470,24 +628,27 @@ export class CALENDAR_MODULE {
       return false;
     }
 
-    // Delete content.
-    this.$uiElemContent.innerHTML = '';
-    this.$uiElemTitle.innerHTML = '';
-    this.$uiElemTitleWeek.innerHTML = '';
+    // render html.
+    if(this.$uiElemTitle){
+      this.$uiElemTitle.innerHTML = this.HtmlTitle();
+    }
 
-    // Render content.
-    this.$uiElemContent.innerHTML = this.HtmlCalendar;
-    this.$uiElemTitle.innerHTML = this.HtmlTitle();
-    this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek();
+    if(this.$uiElemTitleWeek){
+      this.$uiElemTitleWeek.innerHTML = this.HtmlTitleWeek();
+    }
+
+    if(this.$uiElemContent){
+      this.$uiElemContent.innerHTML = this.HtmlCalendar;
+    }
   }
 
   OnLoad() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
-    if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State);
+    if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State, this);
   }
 
   OnChange() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
-    if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State);
+    if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State, this);
   }
 }

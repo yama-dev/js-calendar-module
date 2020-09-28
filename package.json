@@ -1,6 +1,6 @@
 {
   "name": "js-calendar-module",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "description": "Create Calender library.",
   "keywords": [
     "calendar",
@@ -16,7 +16,9 @@
     "build:develop": "webpack --progress --colors --watch",
     "prod": "cross-env NODE_ENV=\"production\" npm-run-all -p build:production server:production",
     "server:production": "browser-sync start --server ./ --directory ./sample --files **/*.css **/*.js **/*.html",
-    "build:production": "webpack --progress --colors --watch"
+    "build:production": "webpack --progress --colors --watch",
+    "deploy": "cross-env NODE_ENV=\"production\" npm-run-all -p build:deploy",
+    "build:deploy": "webpack --progress --colors"
   },
   "repository": {
     "type": "git",

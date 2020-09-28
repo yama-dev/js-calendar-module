@@ -1,10 +1,25 @@
 # CALENDAR MODULE
 
-<br>
-
-## Feature
-
 Create Calender library.
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Demo](#demo)
+- [Installation,Download](#installationdownload)
+- [Using](#using)
+  - [NPM Usage](#npm-usage)
+  - [Basic Standalone Usage](#basic-standalone-usage)
+- [API](#api)
+  - [Options](#options)
+- [Dependencies](#dependencies)
+- [Licence](#licence)
+- [Author](#author)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+---
 
 <br>
 
