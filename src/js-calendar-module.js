@@ -382,34 +382,10 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
-  GetEventData(obj) {
     /**
-     * 指定した個数のイベントを取得
-     *
-     * @attribute y
-     * @type int
-     * @default [now year]
-     *
-     * @attribute m
-     * @type int
-     * @default [now month] *Start From 0
-     *
-     * @attribute d
-     * @type int
-     * @default [now d]
-     *
-     * @attribute c
-     * @type int
-     * @default 10
-     *
-     * @attribute countType
-     * @type str
-     * @default 'number'
-     *
-     * @attribute toHtml
-     * @type boolean
-     * @default false
+   * イベントを取得
      */
+  GetEventData(obj) {
 
     if (!obj) return [];
 
