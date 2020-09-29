@@ -273,7 +273,6 @@ export class CALENDAR_MODULE {
     } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
       // 特定の期間でカウントの場合
 
-      let _dt_end = _dt_set.add(count - 1, countType);
       for (var _i = 0; _i < count; _i++) {
         let _dt = _dt_set.add(_i, countType);
 
@@ -507,7 +506,7 @@ export class CALENDAR_MODULE {
       };
 
       if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
-        let _dt_prev = _dt_set.subtract(count, countType);
+        let _dt_prev = _dt_set.subtract(count , countType);
         let _dt_next = _dt_set.add(count, countType);
 
         _return.prev_data = {
