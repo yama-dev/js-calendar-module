@@ -382,7 +382,7 @@ export class CALENDAR_MODULE {
       _class_name += _class_name_parent;
     }
 
-    let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, day).current;
+    let _date = CALENDAR_MODULE.AnalyzeDate(year, month_id, day).current;
 
     // Create Calendar HTML data for one day.
     let _return = Object.assign(_date,
