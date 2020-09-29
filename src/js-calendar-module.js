@@ -88,11 +88,6 @@ export class CALENDAR_MODULE {
     // Data Calendar(obj).
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
-    // DebugMode
-    if (this.CurrentUrl.search(/localhost/) !== -1 || this.CurrentUrl.search(/192.168/) !== -1) {
-      this.DebugMode();
-    }
-
     // CacheElement
     this.CacheElement();
 
@@ -113,16 +108,6 @@ export class CALENDAR_MODULE {
     this.OnLoad();
   }
 
-  DebugMode() {
-    console.log(this);
-  }
-
-  StrYear() {
-    return `${this.Config.year}`;
-  }
-  StrMonth() {
-    return `${this.Config.month}`;
-  }
   HtmlTitle() {
     let _obj = {
       year: this.SetDt.year(),
