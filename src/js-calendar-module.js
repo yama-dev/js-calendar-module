@@ -89,7 +89,7 @@ export class CALENDAR_MODULE {
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
     // CacheElement
-    this.CacheElement();
+    this._cacheElement();
 
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({
@@ -102,10 +102,10 @@ export class CALENDAR_MODULE {
     this.HtmlCalendar = this.State.calendar_data.html;
 
     // Render Calendar.
-    this.Render();
+    this._render();
 
     // Event On Load.
-    this.OnLoad();
+    this._onLoad();
   }
 
   HtmlTitle() {
@@ -206,7 +206,7 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
-  CacheElement() {
+  _cacheElement() {
     this.$uiElem = document.querySelector(this.Config.elem);
     this.$uiElemContent = document.querySelector(this.Config.elem_content);
     this.$uiElemTitle = document.querySelector(this.Config.elem_title);
@@ -382,9 +382,9 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
-    /**
+  /**
    * イベントを取得
-     */
+   */
   GetEventData(obj) {
 
     if (!obj) return [];
@@ -509,9 +509,9 @@ export class CALENDAR_MODULE {
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({toHtml:false});
     this.HtmlCalendar = this.State.calendar_data.html;
-    this.Render();
+    this._render();
 
-    this.OnChange();
+    this._onChange();
   }
 
   Next() {
@@ -531,9 +531,9 @@ export class CALENDAR_MODULE {
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({toHtml:false});
     this.HtmlCalendar = this.State.calendar_data.html;
-    this.Render();
+    this._render();
 
-    this.OnChange();
+    this._onChange();
   }
 
   AddData(_add_data = [], isRender = true) {
@@ -559,9 +559,9 @@ export class CALENDAR_MODULE {
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
-      this.OnChange();
+      this._onChange();
       if(isRender){
-        this.Render();
+        this._render();
       }
     }
   }
@@ -574,14 +574,14 @@ export class CALENDAR_MODULE {
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
-      this.OnChange();
+      this._onChange();
       if(isRender){
-        this.Render();
+        this._render();
       }
     }
   }
 
-  Render() {
+  _render() {
     // Auto Render in first time.
     if (this.Config.auto_render === false) {
       this.Config.auto_render = true;
@@ -602,13 +602,14 @@ export class CALENDAR_MODULE {
     }
   }
 
-  OnLoad() {
+  _onLoad() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
     if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State, this);
   }
 
-  OnChange() {
+  _onChange() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
     if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State, this);
   }
+
 }
