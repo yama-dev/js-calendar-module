@@ -88,13 +88,8 @@ export class CALENDAR_MODULE {
     // Data Calendar(obj).
     this.CalendarData = new Calendar(this.Config.monday_start).monthDays(this.Config.year, this.Config.month_id);
 
-    // DebugMode
-    if (this.CurrentUrl.search(/localhost/) !== -1 || this.CurrentUrl.search(/192.168/) !== -1) {
-      this.DebugMode();
-    }
-
     // CacheElement
-    this.CacheElement();
+    this._cacheElement();
 
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({
@@ -107,22 +102,12 @@ export class CALENDAR_MODULE {
     this.HtmlCalendar = this.State.calendar_data.html;
 
     // Render Calendar.
-    this.Render();
+    this._render();
 
     // Event On Load.
-    this.OnLoad();
+    this._onLoad();
   }
 
-  DebugMode() {
-    console.log(this);
-  }
-
-  StrYear() {
-    return `${this.Config.year}`;
-  }
-  StrMonth() {
-    return `${this.Config.month}`;
-  }
   HtmlTitle() {
     let _obj = {
       year: this.SetDt.year(),
@@ -221,7 +206,7 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
-  CacheElement() {
+  _cacheElement() {
     this.$uiElem = document.querySelector(this.Config.elem);
     this.$uiElemContent = document.querySelector(this.Config.elem_content);
     this.$uiElemTitle = document.querySelector(this.Config.elem_title);
@@ -247,7 +232,7 @@ export class CALENDAR_MODULE {
     } = obj;
 
     let m = Number(month) - 1;
-    if(month_id) m = month_id;
+    if(month_id !== null && month_id !== undefined && month_id !== '') m = month_id;
     if(month_str) m = Number(month_str) - 1;
 
     let _dt_set = dayjs(`${year}/${m + 1}/${day}`);
@@ -273,7 +258,6 @@ export class CALENDAR_MODULE {
     } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
       // 特定の期間でカウントの場合
 
-      let _dt_end = _dt_set.add(count - 1, countType);
       for (var _i = 0; _i < count; _i++) {
         let _dt = _dt_set.add(_i, countType);
 
@@ -382,7 +366,7 @@ export class CALENDAR_MODULE {
       _class_name += _class_name_parent;
     }
 
-    let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id, day).current;
+    let _date = CALENDAR_MODULE.AnalyzeDate(year, month_id, day).current;
 
     // Create Calendar HTML data for one day.
     let _return = Object.assign(_date,
@@ -398,34 +382,10 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
+  /**
+   * イベントを取得
+   */
   GetEventData(obj) {
-    /**
-     * 指定した個数のイベントを取得
-     *
-     * @attribute y
-     * @type int
-     * @default [now year]
-     *
-     * @attribute m
-     * @type int
-     * @default [now month] *Start From 0
-     *
-     * @attribute d
-     * @type int
-     * @default [now d]
-     *
-     * @attribute c
-     * @type int
-     * @default 10
-     *
-     * @attribute countType
-     * @type str
-     * @default 'number'
-     *
-     * @attribute toHtml
-     * @type boolean
-     * @default false
-     */
 
     if (!obj) return [];
 
@@ -507,7 +467,7 @@ export class CALENDAR_MODULE {
       };
 
       if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
-        let _dt_prev = _dt_set.subtract(count, countType);
+        let _dt_prev = _dt_set.subtract(count , countType);
         let _dt_next = _dt_set.add(count, countType);
 
         _return.prev_data = {
@@ -549,9 +509,9 @@ export class CALENDAR_MODULE {
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({toHtml:false});
     this.HtmlCalendar = this.State.calendar_data.html;
-    this.Render();
+    this._render();
 
-    this.OnChange();
+    this._onChange();
   }
 
   Next() {
@@ -571,9 +531,9 @@ export class CALENDAR_MODULE {
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({toHtml:false});
     this.HtmlCalendar = this.State.calendar_data.html;
-    this.Render();
+    this._render();
 
-    this.OnChange();
+    this._onChange();
   }
 
   AddData(_add_data = [], isRender = true) {
@@ -599,9 +559,9 @@ export class CALENDAR_MODULE {
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
-      this.OnChange();
+      this._onChange();
       if(isRender){
-        this.Render();
+        this._render();
       }
     }
   }
@@ -614,14 +574,14 @@ export class CALENDAR_MODULE {
 
     if(this.HtmlCalendar !== _html_calendar){
       this.HtmlCalendar = _html_calendar;
-      this.OnChange();
+      this._onChange();
       if(isRender){
-        this.Render();
+        this._render();
       }
     }
   }
 
-  Render() {
+  _render() {
     // Auto Render in first time.
     if (this.Config.auto_render === false) {
       this.Config.auto_render = true;
@@ -642,13 +602,14 @@ export class CALENDAR_MODULE {
     }
   }
 
-  OnLoad() {
+  _onLoad() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
     if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State, this);
   }
 
-  OnChange() {
+  _onChange() {
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
     if (this.on.Change && typeof this.on.Change === 'function') this.on.Change(_date, this.State, this);
   }
+
 }
