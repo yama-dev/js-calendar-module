@@ -64,6 +64,9 @@ export class CALENDAR_MODULE {
     };
 
     this.State = {
+      flg: {
+        loaded: false,
+      },
       week_data: null,
       calendar_data: null,
     };
@@ -496,6 +499,8 @@ export class CALENDAR_MODULE {
   Prev() {
     // Prev.
 
+    if(!this.State.flg.loaded) return false;
+
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
 
     this.Config.year = _date.prev.year;
@@ -517,6 +522,8 @@ export class CALENDAR_MODULE {
   Next() {
     // Next.
 
+    if(!this.State.flg.loaded) return false;
+
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
 
     this.Config.year = _date.next.year;
@@ -537,6 +544,8 @@ export class CALENDAR_MODULE {
   }
 
   AddData(_add_data = [], isRender = true) {
+    if(!this.State.flg.loaded) return false;
+
     // Merge '_add_data' in 'schedule_data'
     if(_add_data.length <= 0) return false;
 
@@ -567,6 +576,8 @@ export class CALENDAR_MODULE {
   }
 
   Update(isRender = true) {
+    if(!this.State.flg.loaded) return false;
+
     // Create&Set Calendar
     this.State.calendar_data = this.CreateCalendarData({toHtml:false});
 
@@ -603,6 +614,8 @@ export class CALENDAR_MODULE {
   }
 
   _onLoad() {
+    this.State.flg.loaded = true;
+
     let _date = CALENDAR_MODULE.AnalyzeDate(this.Config.year, this.Config.month_id);
     if (this.on.Load && typeof this.on.Load === 'function') this.on.Load(_date, this.State, this);
   }
