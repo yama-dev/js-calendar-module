@@ -236,7 +236,7 @@ export class CALENDAR_MODULE {
 
     let m = Number(month) - 1;
     if(month_id !== null && month_id !== undefined && month_id !== '') m = month_id;
-    if(month_str) m = Number(month_str) - 1;
+    if(month_str !== null && month_str !== undefined && month_str !== '') m = Number(month_str) - 1;
 
     let _dt_set = dayjs(`${year}/${m + 1}/${day}`);
 
@@ -404,8 +404,8 @@ export class CALENDAR_MODULE {
     } = obj;
 
     let m = month;
-    if(month_id) m = month_id;
-    if(month_str) m = Number(month_str) - 1;
+    if(month_id !== null && month_id !== undefined && month_id !== '') m = month_id;
+    if(month_str !== null && month_str !== undefined && month_str !== '') m = Number(month_str) - 1;
 
     // Invalid value return.
     if(d == 0){
