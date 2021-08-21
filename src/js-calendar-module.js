@@ -315,6 +315,8 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
+  // parent function 'CreateCalendarData'
+  // for iterative function.
   CreateCalendarDataItem(obj = {}) {
     const {
       index_date,
@@ -388,9 +390,7 @@ export class CALENDAR_MODULE {
     return _return;
   }
 
-  /**
-   * イベントを取得
-   */
+  // Get Event.
   GetEventData(obj) {
 
     if (!obj) return [];
