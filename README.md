@@ -51,7 +51,7 @@ import CALENDAR_MODULE from 'js-calendar-module';
 <script src="./js-calendar-module.js"></script>
 <script>
   let CM =  new CALENDAR_MODULE({
-    monday_start     : true,
+    monday_start     : false,
     day_of_week_list : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     auto_render      : true,
     on: {
