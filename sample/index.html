@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>CALENDAR MODULE</title>
+  <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .js-calendar { width: 96%; margin: 0 auto; line-height: 1.2em; font-size: 14px; }
+  .js-calendar-ui { display: flex; flex-wrap: wrap; align-items: center; margin-top: 1.1em; margin-bottom: 1.1em; }
+  .js-calendar-ui > * { width: 14.28%; padding: 1%; }
+
+  .js-calendar-title-week , .js-calendar-content { display: flex; flex-wrap: wrap; margin-bottom: 1.2em; }
+  .js-calendar-title-week > * , .js-calendar-content > * { width: 14.28%; padding: 1%; overflow: auto; }
+
+  .js-calendar-title-week { border-top: 1px solid #999; border-left: 1px solid #999; }
+  .js-calendar-title-week > * { border-right: 1px solid #999; border-bottom: 1px solid #999; text-align: center; }
+
+  .js-calendar-content { border-top: 1px solid #999; border-left: 1px solid #999; }
+  .js-calendar-content > div { min-height: 100px; border-right: 1px solid #999; border-bottom: 1px solid #999; }
+  .js-calendar-content > div.u-hidden > * { display: none; }
+  .js-calendar-content .u-is-today { background-color: rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body>
+
+<!-- カレンダー -->
+<section class="js-calendar">
+
+  <div class="js-calendar-ui">
+    <button class="prev" onclick="CM.Prev();">Prev</button>
+    <div class="js-calendar-title"></div>
+    <button class="next" onclick="CM.Next();">Next</button>
+    <div><br></div>
+    <button class="next" onclick="CM.Change({year: 2021, month_id: 0});">Change 2021/01</button>
+    <button class="next" onclick="CM.Change({year: 2023, month_id: 11});">Change 2023/12</button>
+  </div>
+
+  <div class="js-calendar-title-week"></div>
+  <div class="js-calendar-content"></div>
+
+</section>
+<!-- カレンダー -->
+
+<script src="./js-multi-data-module.js"></script>
+
+<script src="../dist/js-calendar-module.js"></script>
+
+<script>
+var data = [
+  {
+    "id": "1",
+    "date": "2021/05/03(月)",
+    "title": "add data 1.",
+    "article": "test 1"
+  },
+  {
+    "id": "2",
+    "date": "2021/06/01",
+    "title": "add data 2.",
+    "article": "test 2"
+  }
+];
+
+var template_title = '<span class="year">{{year}}</span>/<span class="month">{{month_str}}</span>';
+template_title = function(d){
+  console.log('template_title',d);
+  var _temp = '<span class="year">{{year}}</span><br>'+
+    '<span class="month">{{month}}</span><br>'+
+    '<span class="month">{{month_str}}</span><br>'+
+    '<span class="month">{{month_str_en_short}}</span><br>'+
+    '<span class="month">{{month_str_en_short_lower}}</span><br>'+
+    '<span class="month">{{month_str_en}}</span><br>'+
+    '<span class="month">{{month_str_en_lower}}</span><br>';
+  return _temp;
+};
+
+var template_title_week = '<p>{{week}}</p>';
+template_title_week = function(d){ console.log('template_title_week',d); return '<p>{{week}}</p>' };
+
+var template_date = ''+
+  '<div class="cell {{class_name}}" data-dayofweek="{{day_of_week}}">'+
+  '  <p class="date"><span>{{date}} - {{date_str}}</span></p>'+
+  '  <p class="date"><span>{{day_of_week_str_en}}({{day_of_week}})</span></p>'+
+  '  {{date_data}}'+
+  '</div>';
+
+var template_date_data = ''+
+  '  <div style="border: 1px solid #666; padding: 5px;">'+
+  '    <span class="ttl">{{title}}</span>'+
+  '    <div class="p-modal-item">{{article}}<br></div>'+
+  '  </div>';
+
+var CM;
+CM = new CALENDAR_MODULE({
+  elem: '.js-calendar',
+  elem_title: '.js-calendar-title',
+  elem_title_week: '.js-calendar-title-week',
+  elem_content: '.js-calendar-content',
+
+  current_date: new Date(2021, 5, 9), // ex. '2021/04' or new Date()
+
+  day_of_week_list: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], // array
+  monday_start     : false, // false || ture
+  schedule_data    : data, // array
+  auto_render      : true, // true || false
+
+  classname: {
+    today: 'u-is-today',
+    date: 'js-calendar-item',
+    date_disable: 'u-hidden',
+    date_hasevent: 'u-has-eventdata',
+    date_noevent: 'u-no-eventdata',
+  },
+
+  template         : {
+    title      : template_title,
+    title_week : template_title_week,
+    date       : template_date,
+    date_data  : template_date_data
+  },
+
+  on: {
+    Load: function(date, state){
+      console.log(date, state);
+
+      setTimeout(function(){
+        console.log(CM.GetEventData({year:2020, month:8,    day:01, count:3,  countType:'number', toHtml:false}));
+
+        console.log(CM.GetEventData({year:2020, month:8,     day:01, count:10, countType:'day',    toHtml:false}));
+        console.log(CM.GetEventData({year:2020, month_id:8,  day:01, count:10, countType:'day',    toHtml:false}));
+        console.log(CM.GetEventData({year:2020, month_str:9, day:01, count:10, countType:'day',    toHtml:false}));
+
+        console.log(CM.CreateCalendarDataItem({year:2021, month_id:4, day:1, count:10, index_date:1 }).date_data);
+        console.log(CM.CreateCalendarData({year:2020, month_id:8, day:1, count:10, countType: 'day' }));
+      }, 300);
+    },
+    Change: function(date, state){
+      console.log(date, state);
+    }
+  }
+});
+</script>
+
+</body>
+</html>
