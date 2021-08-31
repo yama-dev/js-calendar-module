@@ -27,7 +27,7 @@ Create Calender library.
 
 ## Installation,Download
 
-- npm -> [https://www.npmjs.com/package/js-calendar-module](https://www.npmjs.com/package/js-calendar-module)
+- npm -> [https://www.npmjs.com/package/@yama-dev/js-calendar-module](https://www.npmjs.com/package/@yama-dev/js-calendar-module)
 
 <br>
 
@@ -37,12 +37,12 @@ Create Calender library.
 
 ``` bash
 # install npm.
-npm install --save js-calendar-module
+npm install --save @yama-dev/js-calendar-module
 ```
 
 ``` javascript
 // import.
-import CALENDAR_MODULE from 'js-calendar-module';
+import CALENDAR_MODULE from '@yama-dev/js-calendar-module';
 ```
 
 ### Basic Standalone Usage
