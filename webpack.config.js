@@ -2,15 +2,8 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const pkg = require('./package.json');
 
-const comment = `/*!
- * JS CALENDAR_MODULE (JavaScript Library)
- *   ${pkg.name}
- * Version ${pkg.version}
- * Repository ${pkg.repository.url}
- * Copyright ${pkg.author}
- * Licensed ${pkg.license}
- */
-/*! JS PARSE_MODULE (JavaScript Library)   js-parse-module.js Version 0.0.3 Repository https://github.com/yama-dev/js-parse-module Author yama-dev Licensed under the MIT license. */
+const comment = `/*! JS CALENDAR_MODULE (JavaScript Library) ${pkg.name} Version ${pkg.version} Repository ${pkg.repository.url} Author ${pkg.author} Licensed ${pkg.license} */
+/*! JS PARSE_MODULE (JavaScript Library) js-parse-module.js Version 0.2.1 Repository https://github.com/yama-dev/js-parse-module Author yama-dev Licensed under the MIT license. */
 /*! calendar.js: inspired by the calendar module from Python Copyright(c) 2011 Luciano Ramalho <luciano@ramalho.org> MIT Licensed */`;
 
 const env = process.env.NODE_ENV;
