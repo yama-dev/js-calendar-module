@@ -257,7 +257,12 @@ export class CALENDAR_MODULE {
           });
 
           _data.push(_one_day_obj);
+
+          if(typeof this.config.template.title === 'function' ){
+            _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
+          } else {
           _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
+          }
         });
       });
 
@@ -275,8 +280,12 @@ export class CALENDAR_MODULE {
         });
 
         _data.push(_one_day_obj);
+        if(typeof this.config.template.title === 'function' ){
+          _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
+        } else {
         _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
       }
+    }
     }
 
     let _return = '';
