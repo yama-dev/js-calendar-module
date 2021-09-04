@@ -261,7 +261,7 @@ export class CALENDAR_MODULE {
           if(typeof this.config.template.title === 'function' ){
             _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
           } else {
-          _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
+            _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
           }
         });
       });
@@ -283,9 +283,9 @@ export class CALENDAR_MODULE {
         if(typeof this.config.template.title === 'function' ){
           _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
         } else {
-        _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
+          _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
+        }
       }
-    }
     }
 
     let _return = '';
@@ -378,7 +378,13 @@ export class CALENDAR_MODULE {
           _class_name_parent += ` u-has-${val.category_en}`;
         }
         _date_event.push(val);
-        _date_event_html += Str2Mustache(this.config.template.date_data, val);
+
+        if(typeof this.config.template.date_data === 'function' ){
+          _date_event_html += Str2Mustache(this.config.template.date_data(val), val);
+        } else {
+          _date_event_html += Str2Mustache(this.config.template.date_data, val);
+        }
+
       });
       _class_name += _class_name_parent;
     }
@@ -456,7 +462,12 @@ export class CALENDAR_MODULE {
 
           _set_item_count++;
 
-          _event_item_html += Str2Mustache(this.config.template.date_data, val);
+          if(typeof this.config.template.date_data === 'function' ){
+            _event_item_html += Str2Mustache(this.config.template.date_data(val), val);
+          } else {
+            _event_item_html += Str2Mustache(this.config.template.date_data, val);
+          }
+
           _event_item.push(val);
 
         } else if(countType === 'day' || countType === 'week' || countType === 'month' || countType === 'year'){
@@ -465,7 +476,11 @@ export class CALENDAR_MODULE {
           let _dt_end = _dt_set.add(count - 1, countType);
 
           if(_dt.diff(_dt_end) <= 0){
-            _event_item_html += Str2Mustache(this.config.template.date_data, val);
+            if(typeof this.config.template.date_data === 'function' ){
+              _event_item_html += Str2Mustache(this.config.template.date_data(val), val);
+            } else {
+              _event_item_html += Str2Mustache(this.config.template.date_data, val);
+            }
             _event_item.push(val);
           }
         }
