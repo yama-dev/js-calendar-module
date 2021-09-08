@@ -258,7 +258,7 @@ export class CALENDAR_MODULE {
 
           _data.push(_one_day_obj);
 
-          if(typeof this.config.template.title === 'function' ){
+          if(typeof this.config.template.date === 'function' ){
             _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
           } else {
             _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
@@ -280,7 +280,7 @@ export class CALENDAR_MODULE {
         });
 
         _data.push(_one_day_obj);
-        if(typeof this.config.template.title === 'function' ){
+        if(typeof this.config.template.date === 'function' ){
           _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
         } else {
           _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
@@ -345,7 +345,7 @@ export class CALENDAR_MODULE {
     let _date_event_data = _date_event_data_obj.result;
 
     // Set day-of-week.
-    let _date_day_of_week = this.config.day_of_week_list[index_date % 7];
+    let _date_day_of_week = this.state.week_data[index_date % 7];
 
     // On Today.
     if (
