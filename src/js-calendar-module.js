@@ -345,7 +345,7 @@ export class CALENDAR_MODULE {
     let _date_event_data = _date_event_data_obj.result;
 
     // Set day-of-week.
-    let _date_day_of_week = this.config.day_of_week_list[index_date % 7];
+    let _date_day_of_week = this.state.week_data[index_date % 7];
 
     // On Today.
     if (
