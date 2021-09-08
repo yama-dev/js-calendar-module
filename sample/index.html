@@ -52,16 +52,27 @@ var data = [
     "id": "1",
     "date": "2021/05/03(月)",
     "title": "add data 1.",
-    "article": "test 1"
+    "article": "test 1",
+    "flg": true
   },
   {
     "id": "2",
     "date": "2021/06/01",
     "title": "add data 2.",
-    "article": "test 2"
+    "article": "test 2",
+    "flg": true
+  },
+  {
+    "id": "3",
+    "date": "2021/06/02",
+    "title": "add data 3.",
+    "article": "test 3",
+    "flg": false
   }
 ];
+</script>
 
+<script>
 var template_title = '<span class="year">{{year}}</span>/<span class="month">{{month_str}}</span>';
 template_title = function(d){
   console.log('template_title',d);
@@ -74,23 +85,61 @@ template_title = function(d){
     '<span class="month">{{month_str_en_lower}}</span><br>';
   return _temp;
 };
+</script>
 
+<script>
 var template_title_week = '<p>{{week}}</p>';
 template_title_week = function(d){ console.log('template_title_week',d); return '<p>{{week}}</p>' };
+</script>
 
-var template_date = ''+
-  '<div class="cell {{class_name}}" data-dayofweek="{{day_of_week}}">'+
-  '  <p class="date"><span>{{date}} - {{date_str}}</span></p>'+
-  '  <p class="date"><span>{{day_of_week_str_en}}({{day_of_week}})</span></p>'+
-  '  {{date_data}}'+
-  '</div>';
+<script>
+var template_date = '<div class="{{class_name}}">{{date}} {{date_data}}</div>';
+template_date = function(d){
+  console.log('template_date',d);
+  if(d.date_data_ary.length && d.date_data_ary[0].flg === true){
+    var _temp = ''+
+      '<div class="cell {{class_name}}" data-dayofweek="{{day_of_week}}">'+
+      '  <p class="date"><span>{{date}} - {{date_str}}</span></p>'+
+      '  <p class="date"><span>{{day_of_week_str_en}}({{day_of_week}})</span></p>'+
+      '  <i>flg:true</i><br>'+
+      '  {{date_data}}'+
+      '</div>';
+  } else {
+    var _temp = ''+
+      '<div class="cell {{class_name}}" data-dayofweek="{{day_of_week}}">'+
+      '  <p class="date"><span>{{date}} - {{date_str}}</span></p>'+
+      '  <p class="date"><span>{{day_of_week_str_en}}({{day_of_week}})</span></p>'+
+      '  {{date_data}}'+
+      '</div>';
+  }
+  return _temp;
+};
+</script>
 
-var template_date_data = ''+
-  '  <div style="border: 1px solid #666; padding: 5px;">'+
-  '    <span class="ttl">{{title}}</span>'+
-  '    <div class="p-modal-item">{{article}}<br></div>'+
-  '  </div>';
+<script>
+var template_date_data = '<div class="date_data"><div class="title">{{title}}</div><div class="article">{{article}}</div></div>';
+template_date_data = function(d){
+  console.log('template_date_data',d);
 
+  if(d.flg === true){
+    var _temp = ''+
+      '  <div style="border: 1px solid #666; padding: 5px;">'+
+      '    <span class="ttl">{{title}}</span>'+
+      '    <div class="p-modal-item">{{article}}<br></div>'+
+      '  </div>';
+  } else {
+    var _temp = ''+
+      '  <div style="border: 1px solid #666; padding: 5px;">'+
+      '    <span class="ttl">{{title}}</span>'+
+      '    <div class="p-modal-item">{{article}}<br></div>'+
+      '    <i>flg:{{flg}}</i><br>'+
+      '  </div>';
+  }
+  return _temp;
+};
+</script>
+
+<script>
 var CM;
 CM = new CALENDAR_MODULE({
   elem: '.js-calendar',
@@ -125,14 +174,14 @@ CM = new CALENDAR_MODULE({
       console.log(date, state);
 
       setTimeout(function(){
-        console.log(CM.GetEventData({year:2020, month:8,    day:01, count:3,  countType:'number', toHtml:false}));
-
-        console.log(CM.GetEventData({year:2020, month:8,     day:01, count:10, countType:'day',    toHtml:false}));
-        console.log(CM.GetEventData({year:2020, month_id:8,  day:01, count:10, countType:'day',    toHtml:false}));
-        console.log(CM.GetEventData({year:2020, month_str:9, day:01, count:10, countType:'day',    toHtml:false}));
-
-        console.log(CM.CreateCalendarDataItem({year:2021, month_id:4, day:1, count:10, index_date:1 }).date_data);
-        console.log(CM.CreateCalendarData({year:2020, month_id:8, day:1, count:10, countType: 'day' }));
+        // console.log(CM.GetEventData({year:2020, month:8,    day:01, count:3,  countType:'number', toHtml:false}));
+        //
+        // console.log(CM.GetEventData({year:2020, month:8,     day:01, count:10, countType:'day',    toHtml:false}));
+        // console.log(CM.GetEventData({year:2020, month_id:8,  day:01, count:10, countType:'day',    toHtml:false}));
+        // console.log(CM.GetEventData({year:2020, month_str:9, day:01, count:10, countType:'day',    toHtml:false}));
+        //
+        // console.log(CM.CreateCalendarDataItem({year:2021, month_id:4, day:1, count:10, index_date:1 }).date_data);
+        // console.log(CM.CreateCalendarData({year:2020, month_id:8, day:1, count:10, countType: 'day' }));
       }, 300);
     },
     Change: function(date, state){
