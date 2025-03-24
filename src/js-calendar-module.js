@@ -29,6 +29,8 @@ export class CALENDAR_MODULE {
       template: {},
       classname: {},
 
+      delimiters: ['{{', '}}'],
+
       ...options
     };
 
@@ -131,9 +133,9 @@ export class CALENDAR_MODULE {
     let _return = '';
     if(typeof this.config.template.title === 'function' ){
       let _date = CALENDAR_MODULE.AnalyzeDate(this.state.year, this.state.month_id);
-      _return = Str2Mustache(this.config.template.title(_date), _obj);
+      _return = Str2Mustache(this.config.template.title(_date), _obj, true, this.config.delimiters);
     } else {
-      _return = Str2Mustache(this.config.template.title, _obj);
+      _return = Str2Mustache(this.config.template.title, _obj, true, this.config.delimiters);
     }
 
     return _return;
@@ -147,9 +149,9 @@ export class CALENDAR_MODULE {
       };
       if(typeof this.config.template.title_week === 'function' ){
         let _date = CALENDAR_MODULE.AnalyzeDate(this.state.year, this.state.month_id);
-        _return += Str2Mustache(this.config.template.title_week(_date), _obj);
+        _return += Str2Mustache(this.config.template.title_week(_date), _obj, true, this.config.delimiters);
       } else {
-        _return += Str2Mustache(this.config.template.title_week, _obj);
+        _return += Str2Mustache(this.config.template.title_week, _obj, true, this.config.delimiters);
       }
     });
 
@@ -259,9 +261,9 @@ export class CALENDAR_MODULE {
           _data.push(_one_day_obj);
 
           if(typeof this.config.template.date === 'function' ){
-            _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
+            _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj, true, this.config.delimiters);
           } else {
-            _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
+            _data_html += Str2Mustache(this.config.template.date, _one_day_obj, true, this.config.delimiters);
           }
         });
       });
@@ -281,9 +283,9 @@ export class CALENDAR_MODULE {
 
         _data.push(_one_day_obj);
         if(typeof this.config.template.date === 'function' ){
-          _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj);
+          _data_html += Str2Mustache(this.config.template.date(_one_day_obj), _one_day_obj, true, this.config.delimiters);
         } else {
-          _data_html += Str2Mustache(this.config.template.date, _one_day_obj);
+          _data_html += Str2Mustache(this.config.template.date, _one_day_obj, true, this.config.delimiters);
         }
       }
     }
@@ -380,9 +382,9 @@ export class CALENDAR_MODULE {
         _date_event.push(val);
 
         if(typeof this.config.template.date_data === 'function' ){
-          _date_event_html += Str2Mustache(this.config.template.date_data(val), val);
+          _date_event_html += Str2Mustache(this.config.template.date_data(val), val, true, this.config.delimiters);
         } else {
-          _date_event_html += Str2Mustache(this.config.template.date_data, val);
+          _date_event_html += Str2Mustache(this.config.template.date_data, val, true, this.config.delimiters);
         }
 
       });
@@ -463,9 +465,9 @@ export class CALENDAR_MODULE {
           _set_item_count++;
 
           if(typeof this.config.template.date_data === 'function' ){
-            _event_item_html += Str2Mustache(this.config.template.date_data(val), val);
+            _event_item_html += Str2Mustache(this.config.template.date_data(val), val, true, this.config.delimiters);
           } else {
-            _event_item_html += Str2Mustache(this.config.template.date_data, val);
+            _event_item_html += Str2Mustache(this.config.template.date_data, val, true, this.config.delimiters);
           }
 
           _event_item.push(val);
@@ -477,9 +479,9 @@ export class CALENDAR_MODULE {
 
           if(_dt.diff(_dt_end) <= 0){
             if(typeof this.config.template.date_data === 'function' ){
-              _event_item_html += Str2Mustache(this.config.template.date_data(val), val);
+              _event_item_html += Str2Mustache(this.config.template.date_data(val), val, true, this.config.delimiters);
             } else {
-              _event_item_html += Str2Mustache(this.config.template.date_data, val);
+              _event_item_html += Str2Mustache(this.config.template.date_data, val, true, this.config.delimiters);
             }
             _event_item.push(val);
           }
